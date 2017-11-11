@@ -1,5 +1,3 @@
-<p align="center"><a href="#installation">Installation</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
-
 <p align="center">
   <a href="https://travis-ci.org/essentialkaos/sonar"><img src="https://travis-ci.org/essentialkaos/sonar.svg?branch=master" alt="TravisCI" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/sonar"><img src="https://goreportcard.com/badge/github.com/essentialkaos/sonar" alt="GoReportCard" /></a>
@@ -7,6 +5,8 @@
 </p>
 
 <p align="center"><a href="#readme"><img src="https://gh.kaos.io/sonar.svg"/></a></p>
+
+<p align="center"><a href="#installation">Installation</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
 
 `Sonar` is a utility for showing user Slack status in Atlassian Jira.
 
