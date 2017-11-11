@@ -1,0 +1,31 @@
+[main]
+
+  # Disable/enable showing status here
+  enabled: true
+
+[slack]
+
+  # Slack bot token
+  token:
+
+[http]
+
+  # HTTP server IP
+  ip: 
+
+  # HTTP server port
+  port: 33405
+
+[log]
+
+  # Log file dir
+  dir: /var/log/sonar
+
+  # Path to log file
+  file: {log:dir}/sonar.log
+
+  # Log permissions
+  perms: 600
+
+  # Default log level (debug/info/warn/error/crit)
+  level: info

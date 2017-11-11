@@ -1,0 +1,84 @@
+#!/bin/bash
+
+###############################################################################
+
+# sonar Startup script for sonar daemon
+
+# chkconfig: - 85 15
+# processname: sonar
+# config: /etc/sonar.knf
+# pidfile: /var/run/sonar/sonar.pid
+# description: Sonar Daemon
+
+###############################################################################
+
+source /etc/init.d/kaosv
+
+###############################################################################
+
+kv[prog_name]="sonar"
+kv[search_pattern]="sonar --config"
+
+binary="/usr/bin/sonar"
+conf_file="/etc/sonar.knf"
+
+kv[user]="sonar"
+kv[pid_dir]="/var/run/sonar"
+
+###############################################################################
+
+kv.addHandler "start" "startServiceHandler"
+kv.addHandler "stop"  "stopServiceHandler"
+
+kv.addHandler "start"    "preStartServiceHandler" "pre"
+
+kv.disableOutputRedirect "start" "pre"
+
+###############################################################################
+
+preStartServiceHandler() {
+  local has_errors=""
+
+  [[ ! -x $binary ]] && has_errors=true && kv.error "<BINARY> must be executable file"
+  [[ ! -r $conf_file ]] && has_errors=true && kv.error "<CONF_FILE> must be readable file"
+  [[ ! -s $conf_file ]] && has_errors=true && kv.error "<CONF_FILE> can't be empty"
+
+  [[ $has_errors ]] && return $ACTION_ERROR
+
+  return $ACTION_OK
+}
+
+###############################################################################
+
+startServiceHandler() {
+  
+  kv.daemonize "$binary" "--config" "$conf_file"
+
+  [[ $? -ne $ACTION_OK ]] && return $ACTION_ERROR
+
+  sleep 1
+
+  kv.getStartStatus
+
+  return $?
+}
+
+stopServiceHandler() {
+  local pid=$(kv.getPid)
+
+  kv.sendSignal "$SIGNAL_TERM"
+
+  if kv.getStopStatus ; then
+    return $ACTION_OK
+  else
+    if [[ -n "$1" ]] ; then
+      kv.killProcess $pid
+    fi
+
+    return $ACTION_ERROR
+  fi
+}
+
+###############################################################################
+
+kv.go $@
