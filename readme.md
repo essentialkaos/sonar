@@ -30,19 +30,19 @@
 
 Go to `atlassian-jira/WEB-INF/classes/templates/plugins/userformat` and modify next files.
 
-##### `actionProfileLink.vm`
+**actionProfileLink.vm**
 
 ```
 <a $!{userHoverAttributes} id="$!{id}" href="${baseurl}/secure/ViewProfile.jspa?name=${velocityhelper.urlencode($username)}">${renderedAvatarImg} ${author}</a><img class="slack-status" src="https://sonar/status.svg?user=$username" />
 ```
 
-##### `profileLinkWithAvatar.vm`
+**profileLinkWithAvatar.vm**
 
 ```
 ${textutils.htmlEncode($fullname)}<img class="slack-status" src="https://sonar/status.svg?user=$username" />
 ```
 
-##### `avatarFullNameHover.vm`
+**avatarFullNameHover.vm**
 
 ```
 $textutils.htmlEncode($fullname)
