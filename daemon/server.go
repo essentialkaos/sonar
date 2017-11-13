@@ -52,17 +52,7 @@ func fastHTTPHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	query := ctx.QueryArgs()
-
-	if !query.Has("user") {
-		ctx.SetStatusCode(404)
-		return
-	}
-
-	writeBasicInfo(ctx)
-
-	ctx.WriteString(getStatusBadge(string(query.Peek("user"))))
-	ctx.SetStatusCode(200)
+	statusHandler(ctx)
 }
 
 // requestRecover recover panic in request
@@ -75,15 +65,26 @@ func requestRecover(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// writeBasicInfo add basic info to response
-func writeBasicInfo(ctx *fasthttp.RequestCtx) {
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// statusHandler is status request handler
+func statusHandler(ctx *fasthttp.RequestCtx) {
+	query := ctx.QueryArgs()
+
+	if !query.Has("user") {
+		ctx.SetStatusCode(404)
+		return
+	}
+
 	ctx.Response.Header.Set("Content-Type", "image/svg+xml")
 	ctx.Response.Header.Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	ctx.Response.Header.Set("Pragma", "no-cache")
 	ctx.Response.Header.Set("Expires", "0")
-}
 
-// ////////////////////////////////////////////////////////////////////////////////// //
+	ctx.WriteString(getStatusBadge(string(query.Peek("user"))))
+
+	ctx.SetStatusCode(200)
+}
 
 // getStatusBadge return status badge
 func getStatusBadge(user string) string {
