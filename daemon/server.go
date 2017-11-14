@@ -21,7 +21,7 @@ import (
 const (
 	COLOR_ERROR   = "#FFFFFF"
 	COLOR_ONLINE  = "#6DC193"
-	COLOR_DND     = "#E6D362"
+	COLOR_DND     = "#E67E62"
 	COLOR_OFFLINE = "#CCCCCC"
 )
 
