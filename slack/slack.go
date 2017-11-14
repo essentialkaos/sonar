@@ -207,7 +207,7 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 	store.NameIndex.Set(username, meta)
 	store.IDIndex.Set(user.ID, meta)
 
-	log.Debug("Appended new user %s (%s - %s)", user.Name, user.ID, user.RealName)
+	log.Info("Appended new user %s (%s - %s)", user.Name, user.ID, user.RealName)
 }
 
 // updateUserDND update user DND times
