@@ -85,7 +85,7 @@ func GetStatus(username string) Status {
 	data, ok := store.NameIndex.Get(strings.Replace(username, ".", "", -1))
 
 	if !ok {
-		log.Debug("Can't find info for user %s", username)
+		log.Warn("Can't find info for user %s", username)
 		return STATUS_UNKNOWN
 	}
 
