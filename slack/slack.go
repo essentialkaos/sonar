@@ -36,15 +36,15 @@ type userMeta struct {
 	DNDStart int64
 	DNDEnd   int64
 
-	Name     string
+	Email    string
 	RealName string
 
 	mutex *sync.RWMutex
 }
 
 type dataStore struct {
-	// Map username -> meta
-	NameIndex cmap.ConcurrentMap
+	// Map mail -> meta
+	MailIndex cmap.ConcurrentMap
 
 	// Map ID -> meta
 	IDIndex cmap.ConcurrentMap
@@ -79,13 +79,13 @@ func StartObserver(token string) error {
 }
 
 // GetStatus return user status by name
-func GetStatus(username string) Status {
-	log.Debug("Got status request for %s", username)
+func GetStatus(email string) Status {
+	log.Debug("Got status request for %s", email)
 
-	data, ok := store.NameIndex.Get(strings.Replace(username, ".", "", -1))
+	data, ok := store.MailIndex.Get(strings.Replace(email, ".", "", -1))
 
 	if !ok {
-		log.Warn("Can't find info for user %s", username)
+		log.Warn("Can't find info for user %s", email)
 		return STATUS_UNKNOWN
 	}
 
@@ -190,7 +190,7 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 	meta.Online = user.Presence == "active"
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-	meta.Name = user.Name
+	meta.Email = user.Profile.Email
 	meta.RealName = user.RealName
 
 	if dndInfo != nil {
@@ -202,12 +202,10 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 		}
 	}
 
-	username := strings.Replace(user.Name, ".", "", -1)
-
-	store.NameIndex.Set(username, meta)
+	store.MailIndex.Set(user.Profile.Email, meta)
 	store.IDIndex.Set(user.ID, meta)
 
-	log.Info("Appended new user %s (%s - %s)", user.Name, user.ID, user.RealName)
+	log.Info("Appended new user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 }
 
 // updateUserDND update user DND times
@@ -226,7 +224,7 @@ func updateUserDND(id string, status slack.DNDStatus) {
 	meta.DNDEnd = int64(status.NextEndTimestamp)
 	meta.mutex.Unlock()
 
-	log.Debug("Updated DND for user %s (%s - %s)", meta.Name, id, meta.RealName)
+	log.Debug("Updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
 // updateUserPresence update user presence
@@ -244,7 +242,7 @@ func updateUserPresence(id string, online bool) {
 	meta.Online = online
 	meta.mutex.Unlock()
 
-	log.Debug("Updated presence for user %s (%s - %s)", meta.Name, id, meta.RealName)
+	log.Debug("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
 // updateUserVacation user vacation status
@@ -262,5 +260,5 @@ func updateUserVacation(user slack.User) {
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 	meta.mutex.Unlock()
 
-	log.Debug("Updated vacation status for user %s (%s - %s)", user.Name, user.ID, user.RealName)
+	log.Debug("Updated vacation status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 }

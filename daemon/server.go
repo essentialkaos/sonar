@@ -71,7 +71,7 @@ func requestRecover(ctx *fasthttp.RequestCtx) {
 func statusHandler(ctx *fasthttp.RequestCtx) {
 	query := ctx.QueryArgs()
 
-	if !query.Has("user") {
+	if !query.Has("email") {
 		ctx.SetStatusCode(404)
 		return
 	}
@@ -81,18 +81,18 @@ func statusHandler(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Pragma", "no-cache")
 	ctx.Response.Header.Set("Expires", "0")
 
-	ctx.WriteString(getStatusBadge(string(query.Peek("user"))))
+	ctx.WriteString(getStatusBadge(string(query.Peek("email"))))
 
 	ctx.SetStatusCode(200)
 }
 
 // getStatusBadge return status badge
-func getStatusBadge(user string) string {
+func getStatusBadge(email string) string {
 	if !enabled {
 		return svg.GetPoint(COLOR_ERROR)
 	}
 
-	switch slack.GetStatus(user) {
+	switch slack.GetStatus(email) {
 	case slack.STATUS_OFFLINE:
 		return svg.GetPoint(COLOR_OFFLINE)
 	case slack.STATUS_ONLINE:
