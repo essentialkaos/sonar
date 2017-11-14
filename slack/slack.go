@@ -79,13 +79,13 @@ func StartObserver(token string) error {
 }
 
 // GetStatus return user status by name
-func GetStatus(email string) Status {
-	log.Debug("Got status request for %s", email)
+func GetStatus(mail string) Status {
+	log.Debug("Got status request for %s", mail)
 
-	data, ok := store.MailIndex.Get(strings.Replace(email, ".", "", -1))
+	data, ok := store.MailIndex.Get(strings.Replace(mail, ".", "", -1))
 
 	if !ok {
-		log.Warn("Can't find info for user %s", email)
+		log.Warn("Can't find info for user %s", mail)
 		return STATUS_UNKNOWN
 	}
 
