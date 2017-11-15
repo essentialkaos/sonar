@@ -51,6 +51,8 @@ $textutils.htmlEncode($fullname)
 
 Then restart your Jira instance.
 
+Also, you can add `sonar.js` to your announcement banner for a periodic status update.
+
 ### Build Status
 
 | Branch | Status |
