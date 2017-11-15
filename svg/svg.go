@@ -8,7 +8,7 @@ package svg
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func GetPoint(color string) string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="` + color + `" d="M4.55 10.65Q4 11.2 4 12q0 .85.55 1.4.6.6 1.45.6t1.4-.6q.6-.6.6-1.4 0-.75-.6-1.35Q6.8 10 6 10q-.8 0-1.45.65z"/></defs><use xlink:href="#a"/></svg>`
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="` + color + `" d="M4.5 10.7Q4 11.2 4 12t.5 1.4q.7.6 1.5.6t1.4-.6q.6-.6.6-1.4 0-.8-.6-1.3Q6.8 10 6 10q-.8 0-1.5.7z"/></defs><use xlink:href="#a"/></svg>`
 }
 
 func GetAirplane() string {
