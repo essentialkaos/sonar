@@ -16,14 +16,14 @@
 
 ```bash
 [sudo] yum install -y https://yum.kaos.io/6/release/x86_64/kaos-repo-8.0-0.el6.noarch.rpm
-[sudo] yum install bastion
+[sudo] yum install sonar
 ```
 
 #### From ESSENTIAL KAOS Public repo for RHEL7/CentOS7
 
 ```bash
 [sudo] yum install -y https://yum.kaos.io/7/release/x86_64/kaos-repo-8.0-0.el7.noarch.rpm
-[sudo] yum install bastion
+[sudo] yum install sonar
 ```
 
 #### Integration with Jira
@@ -57,8 +57,8 @@ Also, you can add `sonar.js` to your announcement banner for a periodic status u
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![Build Status](https://travis-ci.org/essentialkaos/bastion.svg?branch=master)](https://travis-ci.org/essentialkaos/bastion) |
-| `develop` | [![Build Status](https://travis-ci.org/essentialkaos/bastion.svg?branch=develop)](https://travis-ci.org/essentialkaos/bastion) |
+| `master` | [![Build Status](https://travis-ci.org/essentialkaos/sonar.svg?branch=master)](https://travis-ci.org/essentialkaos/sonar) |
+| `develop` | [![Build Status](https://travis-ci.org/essentialkaos/sonar.svg?branch=develop)](https://travis-ci.org/essentialkaos/sonar) |
 
 ### Contributing
 
