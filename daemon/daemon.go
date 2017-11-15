@@ -107,7 +107,6 @@ func Init() {
 	validateConfig()
 	registerSignalHandlers()
 	setupLogger()
-	loadMappings()
 	createPidFile()
 
 	log.Aux(strings.Repeat("-", 88))
@@ -202,10 +201,10 @@ func loadMappings() {
 
 	mappings = make(map[string]string)
 
-	err := jsonutil.DecodeFile(knf.GetS(MAIN_MAPPINGS), mappings)
+	err := jsonutil.DecodeFile(knf.GetS(MAIN_MAPPINGS), &mappings)
 
 	if err != nil {
-		printErrorAndExit(err.Error())
+		log.Error(err.Error())
 	}
 }
 
@@ -222,6 +221,8 @@ func createPidFile() {
 
 // start start service
 func start() {
+	loadMappings()
+
 	err := slack.StartObserver(knf.GetS(SLACK_TOKEN), mappings)
 
 	if err != nil {
