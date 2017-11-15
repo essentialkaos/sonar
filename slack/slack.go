@@ -82,7 +82,7 @@ func StartObserver(token string) error {
 func GetStatus(mail string) Status {
 	log.Debug("Got status request for %s", mail)
 
-	data, ok := store.MailIndex.Get(strings.Replace(mail, ".", "", -1))
+	data, ok := store.MailIndex.Get(mail)
 
 	if !ok {
 		log.Warn("Can't find info for user %s", mail)
@@ -181,7 +181,7 @@ func fetchInitialInfo() error {
 
 // addNewUser add new user to store
 func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
-	if user.Deleted {
+	if user.Deleted || user.IsBot {
 		return
 	}
 
@@ -247,6 +247,10 @@ func updateUserPresence(id string, online bool) {
 
 // updateUserVacation user vacation status
 func updateUserVacation(user slack.User) {
+	if user.IsBot {
+		return
+	}
+
 	data, ok := store.IDIndex.Get(user.ID)
 
 	if !ok {
