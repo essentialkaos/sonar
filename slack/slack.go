@@ -53,17 +53,19 @@ type dataStore struct {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 var (
-	client *slack.Client
-	rtm    *slack.RTM
-	store  *dataStore
+	client   *slack.Client
+	rtm      *slack.RTM
+	store    *dataStore
+	mappings map[string]string
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // StartObserver start status observer
-func StartObserver(token string) error {
+func StartObserver(token string, mp map[string]string) error {
 	client = slack.New(token)
 	rtm = client.NewRTM()
+	mappings = mp
 
 	store = &dataStore{cmap.New(), cmap.New()}
 
@@ -81,6 +83,10 @@ func StartObserver(token string) error {
 // GetStatus return user status by name
 func GetStatus(mail string) Status {
 	log.Debug("Got status request for %s", mail)
+
+	if mappings != nil && mappings[mail] != "" {
+		mail = mappings[mail]
+	}
 
 	data, ok := store.MailIndex.Get(mail)
 

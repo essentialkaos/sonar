@@ -3,6 +3,9 @@
   # Disable/enable showing status here
   enabled: true
 
+  # Path to file with email mappings
+  mappings:
+
 [slack]
 
   # Slack bot token

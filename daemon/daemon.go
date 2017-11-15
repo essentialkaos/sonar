@@ -14,6 +14,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/fmtc"
 	"pkg.re/essentialkaos/ek.v9/fsutil"
+	"pkg.re/essentialkaos/ek.v9/jsonutil"
 	"pkg.re/essentialkaos/ek.v9/knf"
 	"pkg.re/essentialkaos/ek.v9/log"
 	"pkg.re/essentialkaos/ek.v9/options"
@@ -43,14 +44,15 @@ const (
 
 // Configuration file props
 const (
-	MAIN_ENABLED = "main:enabled"
-	SLACK_TOKEN  = "slack:token"
-	HTTP_IP      = "http:ip"
-	HTTP_PORT    = "http:port"
-	LOG_DIR      = "log:dir"
-	LOG_FILE     = "log:file"
-	LOG_PERMS    = "log:perms"
-	LOG_LEVEL    = "log:level"
+	MAIN_ENABLED  = "main:enabled"
+	MAIN_MAPPINGS = "main:mappings"
+	SLACK_TOKEN   = "slack:token"
+	HTTP_IP       = "http:ip"
+	HTTP_PORT     = "http:port"
+	LOG_DIR       = "log:dir"
+	LOG_FILE      = "log:file"
+	LOG_PERMS     = "log:perms"
+	LOG_LEVEL     = "log:level"
 )
 
 // Pid info
@@ -70,6 +72,7 @@ var optMap = options.Map{
 }
 
 var enabled bool
+var mappings map[string]string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -104,6 +107,7 @@ func Init() {
 	validateConfig()
 	registerSignalHandlers()
 	setupLogger()
+	loadMappings()
 	createPidFile()
 
 	log.Aux(strings.Repeat("-", 88))
@@ -190,6 +194,21 @@ func setupLogger() {
 	}
 }
 
+// loadMappings load mappings data
+func loadMappings() {
+	if knf.GetS(MAIN_MAPPINGS) == "" {
+		return
+	}
+
+	mappings = make(map[string]string)
+
+	err := jsonutil.DecodeFile(knf.GetS(MAIN_MAPPINGS), mappings)
+
+	if err != nil {
+		printErrorAndExit(err.Error())
+	}
+}
+
 // createPidFile create PID file
 func createPidFile() {
 	pid.Dir = PID_DIR
@@ -203,7 +222,7 @@ func createPidFile() {
 
 // start start service
 func start() {
-	err := slack.StartObserver(knf.GetS(SLACK_TOKEN))
+	err := slack.StartObserver(knf.GetS(SLACK_TOKEN), mappings)
 
 	if err != nil {
 		log.Crit(err.Error())
