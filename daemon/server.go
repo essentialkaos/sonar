@@ -19,6 +19,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Points colors
 const (
 	COLOR_ERROR   = "#FFFFFF"
 	COLOR_ONLINE  = "#6DC193"
@@ -26,6 +27,7 @@ const (
 	COLOR_OFFLINE = "#CCCCCC"
 )
 
+// Query strings
 const (
 	QUERY_MAIL  = "mail"
 	QUERY_TOKEN = "token"
