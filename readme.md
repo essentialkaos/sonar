@@ -33,20 +33,29 @@ Go to `atlassian-jira/WEB-INF/classes/templates/plugins/userformat` and modify n
 **actionProfileLink.vm**
 
 ```
-<a $!{userHoverAttributes} id="$!{id}" href="${baseurl}/secure/ViewProfile.jspa?name=${velocityhelper.urlencode($username)}">${renderedAvatarImg} ${author}</a><img class="slack-status" src="https://sonar/status.svg?mail=$user.emailAddress" />
+<a $!{userHoverAttributes} id="$!{id}" href="${baseurl}/secure/ViewProfile.jspa?name=${velocityhelper.urlencode($username)}">${renderedAvatarImg} ${author}</a><img class="slack-status" src="https://sonar/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 ```
 
 **profileLinkWithAvatar.vm**
 
 ```
-${textutils.htmlEncode($fullname)}<img class="slack-status" src="https://sonar/status.svg?mail=$user.emailAddress" />
+${textutils.htmlEncode($fullname)}<img class="slack-status" src="https://sonar/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
+
+...
+
+${textutils.htmlEncode($username)}<img class="slack-status" src="https://sonar.funbox.io/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 ```
 
 **avatarFullNameHover.vm**
 
 ```
 $textutils.htmlEncode($fullname)
-<img class="slack-status" src="https://sonar/status.svg?mail=$user.emailAddress" />
+<img class="slack-status" src="https://sonar/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
+
+...
+
+$textutils.htmlEncode($username)
+<img class="slack-status" src="https://sonar.funbox.io/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 ```
 
 Then restart your Jira instance.

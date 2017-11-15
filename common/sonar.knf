@@ -6,6 +6,9 @@
   # Path to file with email mappings
   mappings:
 
+  # A unique token which must be used for all requests
+  token:
+
 [slack]
 
   # Slack bot token

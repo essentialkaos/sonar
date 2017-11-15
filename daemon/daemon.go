@@ -46,6 +46,7 @@ const (
 const (
 	MAIN_ENABLED  = "main:enabled"
 	MAIN_MAPPINGS = "main:mappings"
+	MAIN_TOKEN    = "main:token"
 	SLACK_TOKEN   = "slack:token"
 	HTTP_IP       = "http:ip"
 	HTTP_PORT     = "http:port"
@@ -71,8 +72,11 @@ var optMap = options.Map{
 	OPT_VERSION:  {Type: options.BOOL, Alias: "ver"},
 }
 
-var enabled bool
-var mappings map[string]string
+var (
+	enabled  bool
+	mappings map[string]string
+	token    []byte
+)
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -142,6 +146,7 @@ func validateConfig() {
 	}
 
 	errs := knf.Validate([]*knf.Validator{
+		{MAIN_TOKEN, knf.Empty, nil},
 		{SLACK_TOKEN, knf.Empty, nil},
 		{LOG_DIR, knf.Empty, nil},
 		{LOG_FILE, knf.Empty, nil},
@@ -229,6 +234,8 @@ func start() {
 		log.Crit(err.Error())
 		shutdown(1)
 	}
+
+	token = []byte(knf.GetS(MAIN_TOKEN))
 
 	err = startHTTPServer(
 		knf.GetS(HTTP_IP),
