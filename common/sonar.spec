@@ -48,7 +48,7 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.0.0
+Version:         1.1.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -119,5 +119,10 @@ exit 0
 ###############################################################################
 
 %changelog
+* Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.0-0
+- Colorblind-friendly design and colors
+- slack package replaced by ek fork
+- Fixed bug with updating user DND status
+
 * Sat Oct 14 2017 Anton Novojilov <andy@essentialkaos.com> - 1.0.0-0
 - Initial public release

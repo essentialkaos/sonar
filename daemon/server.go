@@ -21,10 +21,9 @@ import (
 
 // Points colors
 const (
-	COLOR_ERROR   = "#FFFFFF"
-	COLOR_ONLINE  = "#6DC193"
-	COLOR_DND     = "#E67E62"
-	COLOR_OFFLINE = "#CCCCCC"
+	COLOR_ERROR  = "#FFFFFF"
+	COLOR_ONLINE = "#6DC185"
+	COLOR_DND    = "#E7505A"
 )
 
 // Query strings
@@ -107,7 +106,7 @@ func getStatusBadge(mail string) string {
 
 	switch slack.GetStatus(mail) {
 	case slack.STATUS_OFFLINE:
-		return svg.GetPoint(COLOR_OFFLINE)
+		return svg.GetCircle()
 	case slack.STATUS_ONLINE:
 		return svg.GetPoint(COLOR_ONLINE)
 	case slack.STATUS_DND:

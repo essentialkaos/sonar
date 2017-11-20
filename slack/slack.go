@@ -14,7 +14,8 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"github.com/nlopes/slack"
+	"github.com/essentialkaos/slack"
+
 	"github.com/orcaman/concurrent-map"
 )
 
@@ -252,7 +253,34 @@ func updateUserPresence(id string, online bool) {
 	meta.Online = online
 	meta.mutex.Unlock()
 
+	checkUserDND(id, meta)
+
 	log.Debug("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
+}
+
+// checkUserDND check if we should update user dnd status
+func checkUserDND(id string, meta *userMeta) {
+	if meta.DNDStart == 0 {
+		return
+	}
+
+	if meta.DNDEnd > time.Now().Unix() {
+		return
+	}
+
+	status, err := client.GetDNDInfo(&id)
+
+	if err != nil {
+		log.Error("Can't check user DND status: %v", err)
+		return
+	}
+
+	meta.mutex.Lock()
+	meta.DNDStart = int64(status.NextStartTimestamp)
+	meta.DNDEnd = int64(status.NextEndTimestamp)
+	meta.mutex.Unlock()
+
+	log.Debug("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
 // updateUserVacation user vacation status
