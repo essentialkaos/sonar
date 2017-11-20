@@ -259,7 +259,7 @@ func updateUserPresence(id string, online bool) {
 }
 
 // checkUserDND check if we should update user dnd status
-func checkUserDND(id string, meta userMeta) {
+func checkUserDND(id string, meta *userMeta) {
 	if meta.DNDStart == 0 {
 		return
 	}
@@ -268,7 +268,7 @@ func checkUserDND(id string, meta userMeta) {
 		return
 	}
 
-	status, err := client.GetDNDInfo(id)
+	status, err := client.GetDNDInfo(&id)
 
 	if err != nil {
 		log.Error("Can't check user DND status: %v", err)
