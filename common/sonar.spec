@@ -120,7 +120,7 @@ exit 0
 
 %changelog
 * Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.1-0
-- Minor fix with point svg generation
+- Minor fix for status point SVG generation
 
 * Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.0-0
 - Colorblind-friendly design and colors
