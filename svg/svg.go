@@ -9,7 +9,7 @@ package svg
 
 // GetPoint return point svg with given color
 func GetPoint(color string) string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="` + color + `" d="M11 11q0-1.25-.85-2.15Q9.25 8 8 8q-1.2 0-2.1.85Q5 9.75 5 11t.9 2.1q.9.9 2.1.9 1.25 0 2.15-.9.85-.85.85-2.1z"/></defs><use xlink:href="#a"/></svg>`
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 16 16"><defs><path id="a" fill="` + color + `" d="M11 11q0-1.25-.85-2.15Q9.25 8 8 8q-1.2 0-2.1.85Q5 9.75 5 11t.9 2.1q.9.9 2.1.9 1.25 0 2.15-.9.85-.85.85-2.1z"/></defs><use xlink:href="#a"/></svg>`
 }
 
 // GetCircle return circle svg
