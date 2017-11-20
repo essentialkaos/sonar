@@ -122,6 +122,7 @@ exit 0
 * Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.0-0
 - Colorblind-friendly design and colors
 - slack package replaced by ek fork
+- Fixed bug with updating user DND status
 
 * Sat Oct 14 2017 Anton Novojilov <andy@essentialkaos.com> - 1.0.0-0
 - Initial public release
