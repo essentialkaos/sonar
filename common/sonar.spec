@@ -121,6 +121,7 @@ exit 0
 %changelog
 * Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.0-0
 - Colorblind-friendly design and colors
+- slack package replaced by ek fork
 
 * Sat Oct 14 2017 Anton Novojilov <andy@essentialkaos.com> - 1.0.0-0
 - Initial public release
