@@ -14,7 +14,8 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"github.com/nlopes/slack"
+	"github.com/essentialkaos/slack"
+
 	"github.com/orcaman/concurrent-map"
 )
 
