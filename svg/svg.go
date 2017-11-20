@@ -9,12 +9,12 @@ package svg
 
 // GetPoint return point svg with given color
 func GetPoint(color string) string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="` + color + `" d="M6 9q-1.2 0-2 1-1 .8-1 2 0 1.3 1 2 .8 1 2 1 1.3 0 2-1 1-.8 1-2 0-1-1-2-.8-1-2-1z"/></defs><use xlink:href="#a"/></svg>`
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="` + color + `" d="M11 11q0-1.25-.85-2.15Q9.25 8 8 8q-1.2 0-2.1.85Q5 9.75 5 11t.9 2.1q.9.9 2.1.9 1.25 0 2.15-.9.85-.85.85-2.1z"/></defs><use xlink:href="#a"/></svg>`
 }
 
 // GetCircle return circle svg
 func GetCircle() string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 12 16"><defs><path id="a" fill="#B2B2B2" d="M4 10q-1 .8-1 2 0 1.3 1 2v.2q.8.8 2 .8 1.3 0 2-.8h.2Q9 13 9 12q0-1.2-.8-2Q7 9 6 9q-1.2 0-2 1m3 1q.3.5.3 1T7 13q-.5.3-1 .3T5 13q-.3-.5-.3-1t.4-1q.6-.3 1-.3t1 .4z"/></defs><use xlink:href="#a"/></svg>`
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 16 16"><defs><path id="a" fill="#BBB" d="M11 11q0-1.25-.85-2.15Q9.25 8 8 8q-1.2 0-2.1.85Q5 9.75 5 11t.9 2.1q.9.9 2.1.9 1.25 0 2.15-.9.85-.85.85-2.1M6.95 9.95Q7.4 9.5 8 9.5q.65 0 1.1.45.4.45.4 1.05 0 .65-.4 1.05-.45.45-1.1.45-.6 0-1.05-.45-.45-.4-.45-1.05 0-.6.45-1.05z"/></defs><use xlink:href="#a"/></svg>`
 }
 
 // GetAirplane return airplane icon svg
