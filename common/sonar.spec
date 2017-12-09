@@ -121,8 +121,9 @@ exit 0
 %changelog
 * Sat Dec 09 2017 Anton Novojilov <andy@essentialkaos.com> - 1.2.0-0
 - Added on-call status handling
+- New icons
 - Improved SVG icons
-- Minor improvements
+- Minor performance improvements
 
 * Mon Nov 20 2017 Anton Novojilov <andy@essentialkaos.com> - 1.1.2-0
 - Minor fix for status point SVG generation
