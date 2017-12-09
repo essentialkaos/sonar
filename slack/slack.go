@@ -28,6 +28,7 @@ const (
 	STATUS_ONLINE
 	STATUS_DND
 	STATUS_VACATION
+	STATUS_ONCALL
 )
 
 // Status is Slack status
@@ -38,6 +39,7 @@ type Status uint8
 type userMeta struct {
 	Online   bool
 	Vacation bool
+	OnCall   bool
 	DNDStart int64
 	DNDEnd   int64
 
@@ -57,12 +59,17 @@ type dataStore struct {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-var (
-	client   *slack.Client
-	rtm      *slack.RTM
-	store    *dataStore
-	mappings map[string]string
-)
+// slack client
+var client *slack.Client
+
+// rtm connection
+var rtm *slack.RTM
+
+// user info store
+var store *dataStore
+
+// mail mappings
+var mappings map[string]string
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -114,6 +121,10 @@ func GetStatus(mail string) Status {
 			return STATUS_DND
 		}
 
+		if meta.OnCall {
+			return STATUS_ONCALL
+		}
+
 		return STATUS_ONLINE
 	}
 
@@ -122,6 +133,7 @@ func GetStatus(mail string) Status {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// IsDND return true if user in DND
 func (s *userMeta) IsDND() bool {
 	now := time.Now().Unix()
 
@@ -134,35 +146,34 @@ func (s *userMeta) IsDND() bool {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// rtm message handling loop
 func rtmLoop() {
 	go rtm.ManageConnection()
 
 	for {
-		for {
-			select {
-			case event := <-rtm.IncomingEvents:
-				switch event.Data.(type) {
-				case *slack.ConnectingEvent:
-					log.Info("Connecting to Slack...")
-				case *slack.ConnectedEvent:
-					log.Info("Connected to Slack")
-				case *slack.DisconnectedEvent:
-					log.Warn("Disconnected from Slack")
+		select {
+		case event := <-rtm.IncomingEvents:
+			switch event.Data.(type) {
+			case *slack.ConnectingEvent:
+				log.Info("Connecting to Slack...")
+			case *slack.ConnectedEvent:
+				log.Info("Connected to Slack")
+			case *slack.DisconnectedEvent:
+				log.Warn("Disconnected from Slack")
 
-				case *slack.DNDUpdatedEvent:
-					ev := event.Data.(*slack.DNDUpdatedEvent)
-					updateUserDND(ev.User, ev.Status)
-				case *slack.PresenceChangeEvent:
-					ev := event.Data.(*slack.PresenceChangeEvent)
-					updateUserPresence(ev.User, ev.Presence == "active")
-				case *slack.UserChangeEvent:
-					ev := event.Data.(*slack.UserChangeEvent)
+			case *slack.DNDUpdatedEvent:
+				ev := event.Data.(*slack.DNDUpdatedEvent)
+				updateUserDND(ev.User, ev.Status)
+			case *slack.PresenceChangeEvent:
+				ev := event.Data.(*slack.PresenceChangeEvent)
+				updateUserPresence(ev.User, ev.Presence == "active")
+			case *slack.UserChangeEvent:
+				ev := event.Data.(*slack.UserChangeEvent)
 
-					if !store.IDIndex.Has(ev.User.ID) {
-						addNewUser(ev.User, nil)
-					} else {
-						updateUserVacation(ev.User)
-					}
+				if !store.IDIndex.Has(ev.User.ID) {
+					addNewUser(ev.User, nil)
+				} else {
+					updateUserStatus(ev.User)
 				}
 			}
 		}
@@ -283,8 +294,8 @@ func checkUserDND(id string, meta *userMeta) {
 	log.Debug("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
-// updateUserVacation user vacation status
-func updateUserVacation(user slack.User) {
+// updateUserStatus user vacation status
+func updateUserStatus(user slack.User) {
 	if user.IsBot {
 		return
 	}
@@ -299,7 +310,19 @@ func updateUserVacation(user slack.User) {
 	meta := data.(*userMeta)
 
 	meta.mutex.Lock()
+
+	// Update vacation status
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
+
+	// Update on-call status
+	if user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call" {
+		meta.OnCall = true
+	} else {
+		if meta.OnCall {
+			meta.OnCall = false
+		}
+	}
+
 	meta.mutex.Unlock()
 
 	log.Debug("Updated vacation status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
