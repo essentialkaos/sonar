@@ -49,7 +49,7 @@
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
 Version:         1.2.1
-Release:         1%{?dist}
+Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
 URL:             https://github.com/essentialkaos/sonar
