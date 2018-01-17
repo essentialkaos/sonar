@@ -78,7 +78,7 @@ Utility for showing user Slack status in Atlassian Jira.
 export GOPATH=$(pwd) 
 
 pushd %{srcdir}
-  %{__make} %{?_smp_mflags}
+  %{__make} %{?_smp_mflags} sonar
 popd
 
 %install
