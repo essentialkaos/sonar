@@ -48,8 +48,8 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.2.0
-Release:         0%{?dist}
+Version:         1.2.1
+Release:         1%{?dist}
 Group:           Applications/System
 License:         EKOL
 URL:             https://github.com/essentialkaos/sonar
@@ -119,6 +119,12 @@ exit 0
 ###############################################################################
 
 %changelog
+* Wed Jan 17 2018 Anton Novojilov <andy@essentialkaos.com> - 1.2.1-0
+- Updated path to slack package
+
+* Mon Jan 15 2018 Anton Novojilov <andy@essentialkaos.com> - 1.2.0-1
+- Rebuilt with latest version of slack package
+
 * Sat Dec 09 2017 Anton Novojilov <andy@essentialkaos.com> - 1.2.0-0
 - Added on-call status handling
 - New icons
