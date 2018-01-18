@@ -14,7 +14,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"pkg.re/essentialkaos/slack.v1"
+	"pkg.re/essentialkaos/slack.v2"
 
 	"github.com/orcaman/concurrent-map"
 )
@@ -37,11 +37,12 @@ type Status uint8
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 type userMeta struct {
-	Online   bool
-	Vacation bool
-	OnCall   bool
-	DNDStart int64
-	DNDEnd   int64
+	Online     bool
+	Vacation   bool
+	OnCall     bool
+	DNDStart   int64
+	DNDEnd     int64
+	DNDUpdated int64
 
 	Email    string
 	RealName string
@@ -76,6 +77,9 @@ var mappings map[string]string
 // StartObserver start status observer
 func StartObserver(token string, mp map[string]string) error {
 	client = slack.New(token)
+	client.Config.BatchPresenceAware = true
+	client.Config.PresenceSub = true
+
 	rtm = client.NewRTM()
 	mappings = mp
 
@@ -94,8 +98,6 @@ func StartObserver(token string, mp map[string]string) error {
 
 // GetStatus return user status by name
 func GetStatus(mail string) Status {
-	log.Debug("Got status request for %s", mail)
-
 	if mappings != nil && mappings[mail] != "" {
 		mail = mappings[mail]
 	}
@@ -153,31 +155,62 @@ func rtmLoop() {
 	for {
 		select {
 		case event := <-rtm.IncomingEvents:
+			log.Debug("Got slack event %v", event)
 			switch event.Data.(type) {
+
 			case *slack.ConnectingEvent:
 				log.Info("Connecting to Slack...")
+
 			case *slack.ConnectedEvent:
 				log.Info("Connected to Slack")
+
+			case *slack.HelloEvent:
+				subscribeToPresenceEvents()
+
 			case *slack.DisconnectedEvent:
 				log.Warn("Disconnected from Slack")
 
 			case *slack.DNDUpdatedEvent:
 				ev := event.Data.(*slack.DNDUpdatedEvent)
 				updateUserDND(ev.User, ev.Status)
+
 			case *slack.PresenceChangeEvent:
 				ev := event.Data.(*slack.PresenceChangeEvent)
-				updateUserPresence(ev.User, ev.Presence == "active")
+				if ev.User != "" {
+					updateUserPresence([]string{ev.User}, ev.Presence == "active")
+				} else {
+					updateUserPresence(ev.Users, ev.Presence == "active")
+				}
+
 			case *slack.UserChangeEvent:
 				ev := event.Data.(*slack.UserChangeEvent)
 
 				if !store.IDIndex.Has(ev.User.ID) {
-					addNewUser(ev.User, nil)
+					addNewUser(ev.User, nil, true)
 				} else {
 					updateUserStatus(ev.User)
 				}
 			}
 		}
 	}
+}
+
+// subscribeToPresenceEvents subscribe bot to events about presence change for all users
+func subscribeToPresenceEvents() {
+	var usersToSub []string
+
+	for _, id := range store.IDIndex.Keys() {
+		log.Debug("Added %s to subscribe list", id)
+		usersToSub = append(usersToSub, id)
+	}
+
+	err := rtm.PresenceSub(usersToSub)
+
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	log.Info("Subscribed to presence events for all users")
 }
 
 // fetchInitialInfo fetch initial info
@@ -191,22 +224,23 @@ func fetchInitialInfo() error {
 	dndInfo, err := client.GetDNDTeamInfo(nil)
 
 	if err != nil {
-		return nil
+		return err
 	}
 
 	for _, user := range users {
-		addNewUser(user, dndInfo)
+		addNewUser(user, dndInfo, false)
 	}
 
 	return nil
 }
 
 // addNewUser add new user to store
-func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
+func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus, subscribe bool) {
 	if user.Deleted || user.IsBot {
 		return
 	}
 
+	now := time.Now().Unix()
 	meta := &userMeta{mutex: &sync.RWMutex{}}
 
 	meta.Online = user.Presence == "active"
@@ -219,6 +253,7 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 		dnd, ok := dndInfo[user.ID]
 
 		if ok {
+			meta.DNDUpdated = now
 			meta.DNDStart = int64(dnd.NextStartTimestamp)
 			meta.DNDEnd = int64(dnd.NextEndTimestamp)
 		}
@@ -228,6 +263,22 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 	store.IDIndex.Set(user.ID, meta)
 
 	log.Info("Appended new user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+
+	if subscribe {
+		subscribeNewUserToEvents(user.ID, user.RealName)
+	}
+}
+
+// subscribeNewUserToEvents subscribe new user to presence events
+func subscribeNewUserToEvents(id, realName string) {
+	err := rtm.PresenceSub([]string{id})
+
+	if err != nil {
+		log.Error("Can't subscribe to presence events from user %s: %v", realName, err)
+		return
+	}
+
+	log.Info("Successfully subscribed to presence events from user %s", realName)
 }
 
 // updateUserDND update user DND times
@@ -246,27 +297,33 @@ func updateUserDND(id string, status slack.DNDStatus) {
 	meta.DNDEnd = int64(status.NextEndTimestamp)
 	meta.mutex.Unlock()
 
-	log.Debug("Updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	log.Info("Updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
 // updateUserPresence update user presence
-func updateUserPresence(id string, online bool) {
-	data, ok := store.IDIndex.Get(id)
-
-	if !ok {
-		log.Warn("Can't find user with ID %s for presence update", id)
-		return
+func updateUserPresence(ids []string, online bool) {
+	if len(ids) > 1 {
+		log.Info("Got batched presence status (%d events)", len(ids))
 	}
 
-	meta := data.(*userMeta)
+	for _, id := range ids {
+		data, ok := store.IDIndex.Get(id)
 
-	meta.mutex.Lock()
-	meta.Online = online
-	meta.mutex.Unlock()
+		if !ok {
+			log.Warn("Can't find user with ID %s for presence update", id)
+			return
+		}
 
-	checkUserDND(id, meta)
+		meta := data.(*userMeta)
 
-	log.Debug("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
+		meta.mutex.Lock()
+		meta.Online = online
+		meta.mutex.Unlock()
+
+		checkUserDND(id, meta)
+
+		log.Info("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	}
 }
 
 // checkUserDND check if we should update user dnd status
@@ -275,7 +332,9 @@ func checkUserDND(id string, meta *userMeta) {
 		return
 	}
 
-	if meta.DNDEnd > time.Now().Unix() {
+	now := time.Now().Unix()
+
+	if meta.DNDEnd > now || now-meta.DNDUpdated < 180 {
 		return
 	}
 
@@ -289,9 +348,10 @@ func checkUserDND(id string, meta *userMeta) {
 	meta.mutex.Lock()
 	meta.DNDStart = int64(status.NextStartTimestamp)
 	meta.DNDEnd = int64(status.NextEndTimestamp)
+	meta.DNDUpdated = now
 	meta.mutex.Unlock()
 
-	log.Debug("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	log.Info("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
 }
 
 // updateUserStatus user vacation status
@@ -325,5 +385,5 @@ func updateUserStatus(user slack.User) {
 
 	meta.mutex.Unlock()
 
-	log.Debug("Updated vacation status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+	log.Info("Checked status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 }
