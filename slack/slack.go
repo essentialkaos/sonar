@@ -186,7 +186,8 @@ func rtmLoop() {
 				ev := event.Data.(*slack.UserChangeEvent)
 
 				if !store.IDIndex.Has(ev.User.ID) {
-					addNewUser(ev.User, nil, true)
+					addNewUser(ev.User, nil)
+					subscribeToPresenceEvents()
 				} else {
 					updateUserStatus(ev.User)
 				}
@@ -228,14 +229,14 @@ func fetchInitialInfo() error {
 	}
 
 	for _, user := range users {
-		addNewUser(user, dndInfo, false)
+		addNewUser(user, dndInfo)
 	}
 
 	return nil
 }
 
 // addNewUser add new user to store
-func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus, subscribe bool) {
+func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 	if user.Deleted || user.IsBot {
 		return
 	}
@@ -263,22 +264,6 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus, subscribe b
 	store.IDIndex.Set(user.ID, meta)
 
 	log.Info("Appended new user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-
-	if subscribe {
-		subscribeNewUserToEvents(user.ID, user.RealName)
-	}
-}
-
-// subscribeNewUserToEvents subscribe new user to presence events
-func subscribeNewUserToEvents(id, realName string) {
-	err := rtm.PresenceSub([]string{id})
-
-	if err != nil {
-		log.Error("Can't subscribe to presence events from user %s: %v", realName, err)
-		return
-	}
-
-	log.Info("Successfully subscribed to presence events from user %s", realName)
 }
 
 // updateUserDND update user DND times
