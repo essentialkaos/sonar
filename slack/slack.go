@@ -266,18 +266,6 @@ func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
 	log.Info("Appended new user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 }
 
-// subscribeNewUserToEvents subscribe new user to presence events
-func subscribeNewUserToEvents(id, realName string) {
-	err := rtm.PresenceSub([]string{id})
-
-	if err != nil {
-		log.Error("Can't subscribe to presence events from user %s: %v", realName, err)
-		return
-	}
-
-	log.Info("Successfully subscribed to presence events from user %s", realName)
-}
-
 // updateUserDND update user DND times
 func updateUserDND(id string, status slack.DNDStatus) {
 	data, ok := store.IDIndex.Get(id)
