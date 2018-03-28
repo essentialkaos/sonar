@@ -48,19 +48,19 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.3.1
+Version:         1.4.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
 URL:             https://github.com/essentialkaos/sonar
 
-Source0:         https://source.kaos.io/%{name}/%{name}-%{version}.tar.bz2
+Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.9
+BuildRequires:   golang >= 1.10
 
-Requires:        kaosv >= 2.13
+Requires:        kaosv >= 2.15
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -86,6 +86,7 @@ rm -rf %{buildroot}
 
 install -dm 755 %{buildroot}%{_bindir}
 install -dm 755 %{buildroot}%{_sysconfdir}
+install -dm 755 %{buildroot}%{_sysconfdir}/logrotate.d
 install -dm 755 %{buildroot}%{_initddir}
 install -dm 755 %{buildroot}%{_logdir}/%{name}
 
@@ -97,6 +98,9 @@ install -pm 644 %{srcdir}/common/%{name}.knf \
 
 install -pm 755 %{srcdir}/common/%{name}.init \
                 %{buildroot}%{_initddir}/%{name}
+
+install -pm 644 %{srcdir}/common/%{name}.logrotate \
+                %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -113,12 +117,19 @@ exit 0
 %doc LICENSE.EN LICENSE.RU
 %attr(-,%{name},%{name}) %dir %{_logdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}.knf
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %{_initddir}/%{name}
 %{_bindir}/%{name}
 
 ###############################################################################
 
 %changelog
+* Wed Mar 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-0
+- fasthttp package replaced by erikdubbelboer fork
+- slack package updated to v3
+- Added open files limits to init script
+- Added configuration file for log rotation
+
 * Thu Jan 18 2018 Anton Novojilov <andy@essentialkaos.com> - 1.3.1-0
 - Fixed subscribing for presence events when new user was added
 

@@ -2,7 +2,7 @@ package daemon
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,7 +11,7 @@ import (
 	"bytes"
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"github.com/valyala/fasthttp"
+	"github.com/erikdubbelboer/fasthttp"
 
 	"github.com/essentialkaos/sonar/slack"
 	"github.com/essentialkaos/sonar/svg"

@@ -2,7 +2,7 @@ package daemon
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -30,7 +30,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.3.1"
+	VER  = "1.4.0"
 	DESC = "Utility for showing user Slack status in Jira"
 )
 
