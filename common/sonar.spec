@@ -122,6 +122,7 @@ exit 0
 * Wed Mar 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-0
 - fasthttp package replaced by erikdubbelboer fork
 - slack package updated to v3
+- Added open files limits to init script
 
 * Thu Jan 18 2018 Anton Novojilov <andy@essentialkaos.com> - 1.3.1-0
 - Fixed subscribing for presence events when new user was added

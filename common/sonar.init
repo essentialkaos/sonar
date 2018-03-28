@@ -22,6 +22,7 @@ kv[search_pattern]="sonar --config"
 binary="/usr/bin/sonar"
 conf_file="/etc/sonar.knf"
 
+kv[file_limit]="10240:10240"
 kv[user]="sonar"
 kv[pid_dir]="/var/run/sonar"
 
