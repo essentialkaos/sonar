@@ -92,6 +92,7 @@ install -dm 755 %{buildroot}%{_bindir}
 install -dm 755 %{buildroot}%{_sysconfdir}
 install -dm 755 %{buildroot}%{_sysconfdir}/logrotate.d
 install -dm 755 %{buildroot}%{_initddir}
+install -dm 755 %{buildroot}%{_unitdir}
 install -dm 755 %{buildroot}%{_logdir}/%{name}
 
 install -pm 755 %{srcdir}/%{name} \
