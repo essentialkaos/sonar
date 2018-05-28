@@ -138,8 +138,8 @@ exit 0
 %changelog
 * Mon May 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-1
 - Added systemd unit
-- Imporved sysv init script
-- Rebuilt with latest version of slack package
+- Improved SysV init script
+- Rebuilt with the latest version of the slack package
 
 * Wed Mar 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-0
 - fasthttp package replaced by erikdubbelboer fork
