@@ -6,6 +6,9 @@
   # Path to file with email mappings
   mappings:
 
+  # Path to file with bots emails
+  bots:
+
   # A unique token which must be used for all requests
   token:
 

@@ -30,7 +30,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.4.0"
+	VER  = "1.5.0"
 	DESC = "Utility for showing user Slack status in Jira"
 )
 
@@ -46,6 +46,7 @@ const (
 const (
 	MAIN_ENABLED  = "main:enabled"
 	MAIN_MAPPINGS = "main:mappings"
+	MAIN_BOTS     = "main:bots"
 	MAIN_TOKEN    = "main:token"
 	SLACK_TOKEN   = "slack:token"
 	HTTP_IP       = "http:ip"
@@ -75,6 +76,7 @@ var optMap = options.Map{
 var (
 	enabled  bool
 	mappings map[string]string
+	bots     map[string]bool
 	token    []byte
 )
 
@@ -213,6 +215,21 @@ func loadMappings() {
 	}
 }
 
+// loadBots load bots emails
+func loadBots() {
+	if knf.GetS(MAIN_BOTS) == "" {
+		return
+	}
+
+	bots = make(map[string]bool)
+
+	err := jsonutil.DecodeFile(knf.GetS(MAIN_BOTS), &bots)
+
+	if err != nil {
+		log.Error(err.Error())
+	}
+}
+
 // createPidFile create PID file
 func createPidFile() {
 	pid.Dir = PID_DIR
@@ -227,6 +244,7 @@ func createPidFile() {
 // start start service
 func start() {
 	loadMappings()
+	loadBots()
 
 	err := slack.StartObserver(knf.GetS(SLACK_TOKEN), mappings)
 

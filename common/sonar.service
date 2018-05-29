@@ -1,0 +1,11 @@
+[Unit]
+Description=Sonar Server
+After=network.target
+
+[Service]
+PIDFile=/var/run/sonar/sonar.pid
+ExecStart=/etc/init.d/sonar start
+ExecStop=/etc/init.d/sonar stop
+
+[Install]
+WantedBy=multi-user.target

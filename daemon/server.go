@@ -104,6 +104,11 @@ func getStatusBadge(mail string) string {
 		return svg.GetPoint(COLOR_ERROR)
 	}
 
+	// Bots always online
+	if bots[mail] {
+		return svg.GetPoint(COLOR_ONLINE)
+	}
+
 	switch slack.GetStatus(mail) {
 	case slack.STATUS_OFFLINE:
 		return svg.GetCircle()

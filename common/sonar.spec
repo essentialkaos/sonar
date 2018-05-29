@@ -1,8 +1,8 @@
-###############################################################################
+################################################################################
 
 # rpmbuilder:relative-pack true
 
-###############################################################################
+################################################################################
 
 %define _posixroot        /
 %define _root             /root
@@ -36,19 +36,19 @@
 %define _rpmstatedir      %{_sharedstatedir}/rpm-state
 %define _pkgconfigdir     %{_libdir}/pkgconfig
 
-###############################################################################
+################################################################################
 
 %define debug_package     %{nil}
 
-###############################################################################
+################################################################################
 
 %define srcdir            src/github.com/essentialkaos/%{name}
 
-###############################################################################
+################################################################################
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.4.0
+Version:         1.5.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -62,20 +62,24 @@ BuildRequires:   golang >= 1.10
 
 Requires:        kaosv >= 2.15
 
+%if 0%{?rhel} >= 7
+Requires:        systemd
+%endif
+
 Provides:        %{name} = %{version}-%{release}
 
-###############################################################################
+################################################################################
 
 %description
 Utility for showing user Slack status in Atlassian Jira.
 
-###############################################################################
+################################################################################
 
 %prep
 %setup -q
 
 %build
-export GOPATH=$(pwd) 
+export GOPATH=$(pwd)
 
 pushd %{srcdir}
   %{__make} %{?_smp_mflags} sonar
@@ -88,6 +92,7 @@ install -dm 755 %{buildroot}%{_bindir}
 install -dm 755 %{buildroot}%{_sysconfdir}
 install -dm 755 %{buildroot}%{_sysconfdir}/logrotate.d
 install -dm 755 %{buildroot}%{_initddir}
+install -dm 755 %{buildroot}%{_unitdir}
 install -dm 755 %{buildroot}%{_logdir}/%{name}
 
 install -pm 755 %{srcdir}/%{name} \
@@ -102,6 +107,11 @@ install -pm 755 %{srcdir}/common/%{name}.init \
 install -pm 644 %{srcdir}/common/%{name}.logrotate \
                 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
+%if 0%{?rhel} >= 7
+install -pDm 644 %{srcdir}/common/%{name}.service \
+                 %{buildroot}%{_unitdir}/
+%endif
+
 %clean
 rm -rf %{buildroot}
 
@@ -110,7 +120,7 @@ getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{name} >/dev/null || useradd -r -M -g %{name} -s /sbin/nologin %{name}
 exit 0
 
-###############################################################################
+################################################################################
 
 %files
 %defattr(-,root,root,-)
@@ -118,12 +128,20 @@ exit 0
 %attr(-,%{name},%{name}) %dir %{_logdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}.knf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%if 0%{?rhel} >= 7
+%{_unitdir}/%{name}.service
+%endif
 %{_initddir}/%{name}
 %{_bindir}/%{name}
 
-###############################################################################
+################################################################################
 
 %changelog
+* Mon May 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-1
+- Added systemd unit
+- Improved SysV init script
+- Rebuilt with the latest version of the slack package
+
 * Wed Mar 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-0
 - fasthttp package replaced by erikdubbelboer fork
 - slack package updated to v3

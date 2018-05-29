@@ -25,6 +25,7 @@ conf_file="/etc/sonar.knf"
 kv[file_limit]="10240:10240"
 kv[user]="sonar"
 kv[pid_dir]="/var/run/sonar"
+kv[log]="/var/log/sonar/errors.log"
 
 ###############################################################################
 
