@@ -137,7 +137,7 @@ exit 0
 ################################################################################
 
 %changelog
-* Mon May 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.4.0-1
+* Mon May 28 2018 Anton Novojilov <andy@essentialkaos.com> - 1.5.0-0
 - Added systemd unit
 - Improved SysV init script
 - Rebuilt with the latest version of the slack package
