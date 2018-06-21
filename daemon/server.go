@@ -21,7 +21,6 @@ import (
 
 // Points colors
 const (
-	COLOR_ERROR  = "#FFFFFF"
 	COLOR_ONLINE = "#6DC185"
 	COLOR_DND    = "#E7505A"
 )
@@ -101,26 +100,26 @@ func statusHandler(ctx *fasthttp.RequestCtx) {
 // getStatusBadge return status badge
 func getStatusBadge(mail string) string {
 	if !enabled {
-		return svg.GetPoint(COLOR_ERROR)
+		return svg.GetBullet("")
 	}
 
 	// Bots always online
 	if bots[mail] {
-		return svg.GetPoint(COLOR_ONLINE)
+		return svg.GetBullet(COLOR_ONLINE)
 	}
 
 	switch slack.GetStatus(mail) {
 	case slack.STATUS_OFFLINE:
 		return svg.GetCircle()
 	case slack.STATUS_ONLINE:
-		return svg.GetPoint(COLOR_ONLINE)
+		return svg.GetBullet(COLOR_ONLINE)
 	case slack.STATUS_DND:
-		return svg.GetPoint(COLOR_DND)
+		return svg.GetBullet(COLOR_DND)
 	case slack.STATUS_VACATION:
 		return svg.GetAirplane()
 	case slack.STATUS_ONCALL:
 		return svg.GetPhone()
 	default:
-		return svg.GetPoint(COLOR_ERROR)
+		return svg.GetBullet("")
 	}
 }

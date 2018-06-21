@@ -7,9 +7,14 @@ package svg
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// GetPoint return point svg with given color
-func GetPoint(color string) string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="16" height="16"><defs><path fill="` + color + `" d="M5.85 13.1q.9.9 2.15.9 1.3 0 2.1-.9.9-.85.9-2.1t-.9-2.15Q9.3 8 8 8q-1.25 0-2.15.85Q5 9.75 5 11t.85 2.1z" id="a"/></defs><use xlink:href="#a"/></svg>`
+// GetBullet return bullet svg with given color
+func GetBullet(color string) string {
+	switch color {
+	case "":
+		return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="16" height="16"><defs><path fill="#fff" fill-opacity="0" d="M16 0H0v16h16V0z" id="a"/></defs><use xlink:href="#a"/></svg>`
+	default:
+		return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="16" height="16"><defs><path fill="` + color + `" d="M5.85 13.1q.9.9 2.15.9 1.3 0 2.1-.9.9-.85.9-2.1t-.9-2.15Q9.3 8 8 8q-1.25 0-2.15.85Q5 9.75 5 11t.85 2.1z" id="a"/></defs><use xlink:href="#a"/></svg>`
+	}
 }
 
 // GetCircle return circle svg

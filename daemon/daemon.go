@@ -30,7 +30,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.5.0"
+	VER  = "1.5.1"
 	DESC = "Utility for showing user Slack status in Jira"
 )
 
