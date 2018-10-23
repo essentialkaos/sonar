@@ -61,7 +61,7 @@ $textutils.htmlEncode($fullname)
 ...
 
 $textutils.htmlEncode($username)
-<img class="slack-status" src="https://sonar.domain.com.funbox.io/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
+<img class="slack-status" src="https://sonar.domain.com/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 ```
 
 Then restart your Jira instance.
