@@ -9,9 +9,10 @@ package daemon
 
 import (
 	"bytes"
+
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"github.com/erikdubbelboer/fasthttp"
+	"pkg.re/valyala/fasthttp.v1"
 
 	"github.com/essentialkaos/sonar/slack"
 	"github.com/essentialkaos/sonar/svg"

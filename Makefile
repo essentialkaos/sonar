@@ -23,10 +23,10 @@ uninstall: ## Uninstall binaries
 
 deps: ## Download dependencies
 	git config --global http.https://pkg.re.followRedirects true
-	go get -d -v github.com/erikdubbelboer/fasthttp
 	go get -d -v github.com/orcaman/concurrent-map
 	go get -d -v pkg.re/essentialkaos/ek.v9
 	go get -d -v pkg.re/essentialkaos/slack.v3
+	go get -d -v pkg.re/valyala/fasthttp.v1
 
 fmt: ## Format source code with gofmt
 	find . -name "*.go" -exec gofmt -s -w {} \;
