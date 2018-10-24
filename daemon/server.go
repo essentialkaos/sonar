@@ -12,7 +12,7 @@ import (
 
 	"pkg.re/essentialkaos/ek.v9/log"
 
-	"pkg.re/valyala/fasthttp.v1"
+	"github.com/valyala/fasthttp"
 
 	"github.com/essentialkaos/sonar/slack"
 	"github.com/essentialkaos/sonar/svg"
