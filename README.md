@@ -11,6 +11,8 @@
 
 `Sonar` is a utility for showing user Slack status in Atlassian Jira.
 
+### Screenshots
+
 <p align="center">
   <img src="https://gh.kaos.st/sonar-preview.png" alt="Sonar Preview">
   <i>Sonar in Jira 6.x (with <a href="https://github.com/essentialkaos/atlassian-remixed-theme">Remixed Theme</a>)</i>
