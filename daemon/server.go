@@ -10,7 +10,7 @@ package daemon
 import (
 	"bytes"
 
-	"pkg.re/essentialkaos/ek.v9/log"
+	"pkg.re/essentialkaos/ek.v10/log"
 
 	"github.com/valyala/fasthttp"
 

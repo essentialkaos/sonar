@@ -12,15 +12,15 @@ import (
 	"runtime"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/fmtc"
-	"pkg.re/essentialkaos/ek.v9/fsutil"
-	"pkg.re/essentialkaos/ek.v9/jsonutil"
-	"pkg.re/essentialkaos/ek.v9/knf"
-	"pkg.re/essentialkaos/ek.v9/log"
-	"pkg.re/essentialkaos/ek.v9/options"
-	"pkg.re/essentialkaos/ek.v9/pid"
-	"pkg.re/essentialkaos/ek.v9/signal"
-	"pkg.re/essentialkaos/ek.v9/usage"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v10/jsonutil"
+	"pkg.re/essentialkaos/ek.v10/knf"
+	"pkg.re/essentialkaos/ek.v10/log"
+	"pkg.re/essentialkaos/ek.v10/options"
+	"pkg.re/essentialkaos/ek.v10/pid"
+	"pkg.re/essentialkaos/ek.v10/signal"
+	"pkg.re/essentialkaos/ek.v10/usage"
 
 	"github.com/essentialkaos/sonar/slack"
 )
@@ -30,7 +30,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.5.3"
+	VER  = "1.5.4"
 	DESC = "Utility for showing user Slack status in Jira"
 )
 

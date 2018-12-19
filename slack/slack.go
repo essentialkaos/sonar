@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/log"
+	"pkg.re/essentialkaos/ek.v10/log"
 
 	"pkg.re/essentialkaos/slack.v3"
 
