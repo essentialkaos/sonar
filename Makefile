@@ -29,11 +29,11 @@ git-config: ## Configure git redirects for stable import path services
 deps: git-config dep-update ## Download dependencies
 
 dep-init: ## Initialize dep workspace
-	which dep &>/dev/null || (echo -e '\e[31mDep is not installed\e[0m' ; exit 1)
+	which dep &>/dev/null || go get -u -v github.com/golang/dep/cmd/dep
 	dep init
 
 dep-update: ## Update packages and dependencies through dep
-	which dep &>/dev/null || (echo -e '\e[31mDep is not installed\e[0m' ; exit 1)
+	which dep &>/dev/null || go get -u -v github.com/golang/dep/cmd/dep
 	test -s Gopkg.toml || dep init
 	dep ensure -update
 
