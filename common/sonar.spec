@@ -48,7 +48,7 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.5.4
+Version:         1.5.5
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -58,7 +58,7 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.11
+BuildRequires:   golang >= 1.12
 
 Requires:        kaosv >= 2.15
 
@@ -137,6 +137,13 @@ exit 0
 ################################################################################
 
 %changelog
+* Mon Mar 25 2019 Anton Novojilov <andy@essentialkaos.com> - 1.5.5-0
+- Improved logic of subscribing for presence events
+- Added support of debug slack logging
+- slack package switched to original version
+- ek package updated to the latest stable version
+- fasthttp package updated to the latest stable release
+
 * Wed Dec 19 2018 Anton Novojilov <andy@essentialkaos.com> - 1.5.4-0
 - ek package updated to v10
 - Improved nginx config example

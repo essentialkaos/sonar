@@ -8,13 +8,14 @@ package slack
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"net/url"
 	"strings"
 	"sync"
 	"time"
 
 	"pkg.re/essentialkaos/ek.v10/log"
 
-	"pkg.re/essentialkaos/slack.v3"
+	"github.com/nlopes/slack"
 
 	"github.com/orcaman/concurrent-map"
 )
@@ -33,6 +34,10 @@ const (
 
 // Status is Slack status
 type Status uint8
+
+// MAX_SUBSCRIBE_BATCH maximum number of users per batch for subscribing for presence
+// events
+const MAX_SUBSCRIBE_BATCH = 100
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -58,6 +63,11 @@ type dataStore struct {
 	IDIndex cmap.ConcurrentMap
 }
 
+// slackLogProxy is proxy logger for slack
+type slackLogProxy struct {
+	Prefix string
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // slack client
@@ -76,11 +86,17 @@ var mappings map[string]string
 
 // StartObserver start status observer
 func StartObserver(token string, mp map[string]string) error {
-	client = slack.New(token)
-	client.Config.BatchPresenceAware = true
-	client.Config.PresenceSub = true
+	client = slack.New(
+		token,
+		slack.OptionLog(&slackLogProxy{"SLACK:"}), // disabled by default, use for debug purposes
+	)
 
-	rtm = client.NewRTM()
+	rtm = client.NewRTM(
+		slack.RTMOptionConnParams(url.Values{
+			"batch_presence_aware": {"1"},
+		}),
+	)
+
 	mappings = mp
 
 	store = &dataStore{cmap.New(), cmap.New()}
@@ -198,17 +214,22 @@ func rtmLoop() {
 
 // subscribeToPresenceEvents subscribe bot to events about presence change for all users
 func subscribeToPresenceEvents() {
-	var usersToSub []string
+	var users []string
 
-	for _, id := range store.IDIndex.Keys() {
+	keys := store.IDIndex.Keys()
+	totalUsers := len(keys)
+
+	for index, id := range keys {
 		log.Debug("Added %s to subscribe list", id)
-		usersToSub = append(usersToSub, id)
-	}
 
-	err := rtm.PresenceSub(usersToSub)
+		users = append(users, id)
 
-	if err != nil {
-		log.Error(err.Error())
+		if len(users) == MAX_SUBSCRIBE_BATCH || index+1 == totalUsers {
+			log.Info("%d users subscribed for presence events...", index+1)
+			rtm.SendMessage(rtm.NewSubscribeUserPresence(users))
+			time.Sleep(time.Second)
+			users = nil
+		}
 	}
 
 	log.Info("Subscribed to presence events for all users")
@@ -371,4 +392,12 @@ func updateUserStatus(user slack.User) {
 	meta.mutex.Unlock()
 
 	log.Info("Checked status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Output writes log message to default logger with prefix
+func (s *slackLogProxy) Output(calldepth int, message string) error {
+	_, err := log.Info("%s %s", s.Prefix, message)
+	return err
 }
