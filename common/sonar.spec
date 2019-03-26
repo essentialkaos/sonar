@@ -138,7 +138,7 @@ exit 0
 
 %changelog
 * Mon Mar 25 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.0-0
-- Improved mechanincs of checking users presence
+- Improved mechanics of checking users presence
 - Added support of debug slack logging
 - slack package switched to original version
 - ek package updated to the latest stable version
