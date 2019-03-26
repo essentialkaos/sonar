@@ -29,6 +29,7 @@ const (
 	STATUS_OFFLINE
 	STATUS_ONLINE
 	STATUS_DND
+	STATUS_DND_OFFLINE
 	STATUS_VACATION
 	STATUS_ONCALL
 	STATUS_DISABLED
@@ -154,6 +155,10 @@ func GetStatus(mail string) Status {
 		}
 
 		return STATUS_ONLINE
+	}
+
+	if meta.IsDND() {
+		return STATUS_DND_OFFLINE
 	}
 
 	return STATUS_OFFLINE

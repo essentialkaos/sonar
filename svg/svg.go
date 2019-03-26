@@ -17,6 +17,11 @@ func GetBullet(color string) string {
 	}
 }
 
+// GetDND return circle with Z
+func GetDND() string {
+	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="16" height="16"><defs><path fill="#BBB" d="M12.45 7.55V6.6H8.8v1.15h1.65l-1.8 2.1v.75h3.85V9.45h-1.65l1.6-1.9M9 8.15Q8.56074219 8 8 8q-1.25 0-2.15.85Q5 9.75 5 11t.85 2.1q.9.9 2.15.9 1.3 0 2.1-.9.77109375-.728125.85-1.75h-1.5q-.07832031.4140625-.4.7-.4.45-1.05.45-.6 0-1.05-.45-.45-.4-.45-1.05 0-.6.45-1.05.39277344-.39277344.9-.45L9 8.15z" id="a"/></defs><use xlink:href="#a"/></svg>`
+}
+
 // GetCircle return circle svg
 func GetCircle() string {
 	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" width="16" height="16"><defs><path fill="#BBB" d="M8 8q-1.25 0-2.15.85Q5 9.75 5 11t.85 2.1q.9.9 2.15.9 1.3 0 2.1-.9.9-.85.9-2.1t-.9-2.15Q9.3 8 8 8m-1.05 4.05q-.45-.4-.45-1.05 0-.6.45-1.05Q7.4 9.5 8 9.5q.65 0 1.05.45.45.45.45 1.05 0 .65-.45 1.05-.4.45-1.05.45-.6 0-1.05-.45z" id="a"/></defs><use xlink:href="#a"/></svg>`

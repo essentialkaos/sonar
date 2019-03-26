@@ -140,6 +140,7 @@ exit 0
 * Mon Mar 25 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.0-0
 - Improved mechanics of checking users presence
 - Added support of debug slack logging
+- Added icon for DND + offline status
 - slack package switched to original version
 - ek package updated to the latest stable version
 - fasthttp package updated to the latest stable release

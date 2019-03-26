@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Points colors
+// Bullets colors
 const (
 	COLOR_ONLINE = "#6DC185"
 	COLOR_DND    = "#E7505A"
@@ -116,6 +116,8 @@ func getStatusBadge(mail string) string {
 		return svg.GetBullet(COLOR_ONLINE)
 	case slack.STATUS_DND:
 		return svg.GetBullet(COLOR_DND)
+	case slack.STATUS_DND_OFFLINE:
+		return svg.GetDND()
 	case slack.STATUS_VACATION:
 		return svg.GetAirplane()
 	case slack.STATUS_ONCALL:
