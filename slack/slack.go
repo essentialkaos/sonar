@@ -37,9 +37,8 @@ const (
 // Status is Slack status
 type Status uint8
 
-// MAX_SUBSCRIBE_BATCH maximum number of users per batch for subscribing for presence
-// events
-const MAX_SUBSCRIBE_BATCH = 100
+// MAX_PRESENCE_CHECK_BATCH maximum number of users per batch for checking presence
+const MAX_PRESENCE_CHECK_BATCH = 100
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -85,6 +84,9 @@ var store *dataStore
 // mail mappings
 var mappings map[string]string
 
+// connection flag
+var connected bool
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // StartObserver start status observer
@@ -111,6 +113,7 @@ func StartObserver(token string, mp map[string]string) error {
 	}
 
 	go rtmLoop()
+	go presenceCheckLoop()
 
 	return nil
 }
@@ -185,13 +188,15 @@ func rtmLoop() {
 				log.Info("Connecting to Slack...")
 
 			case *slack.ConnectedEvent:
+				connected = true
 				log.Info("Connected to Slack")
 
-			case *slack.HelloEvent:
-				subscribeToPresenceEvents()
-
 			case *slack.DisconnectedEvent:
+				connected = false
 				log.Warn("Disconnected from Slack")
+
+			case *slack.HelloEvent:
+				sendPresenceQuery()
 
 			case *slack.DNDUpdatedEvent:
 				ev := event.Data.(*slack.DNDUpdatedEvent)
@@ -210,7 +215,6 @@ func rtmLoop() {
 
 				if !store.IDIndex.Has(ev.User.ID) {
 					addNewUser(ev.User, nil)
-					subscribeToPresenceEvents()
 				} else {
 					updateUserStatus(ev.User)
 				}
@@ -219,32 +223,49 @@ func rtmLoop() {
 	}
 }
 
-// subscribeToPresenceEvents subscribe bot to events about presence change for all users
-func subscribeToPresenceEvents() {
-	var users []string
+// presenceCheckLoop is presence check loop
+func presenceCheckLoop() {
+	for range time.NewTicker(3 * time.Minute).C {
+		if connected {
+			sendPresenceQuery()
+		}
+	}
+}
+
+// sendPresenceQuery send presence query message
+func sendPresenceQuery() {
+	var ids []string
 
 	keys := store.IDIndex.Keys()
 	totalUsers := len(keys)
 	counter := 0
 
+	log.Info(
+		"Sending presence query messages (%d users per message)...",
+		MAX_PRESENCE_CHECK_BATCH,
+	)
+
 	for index, id := range keys {
 		data, _ := store.IDIndex.Get(id)
 		meta := data.(*userMeta)
 
+		meta.mutex.RLock()
+
 		if !meta.Disabled {
-			users = append(users, id)
+			ids = append(ids, id)
 			counter++
 		}
 
-		if len(users) == MAX_SUBSCRIBE_BATCH || index+1 == totalUsers {
-			log.Info("%d users subscribed for presence events...", counter)
-			rtm.SendMessage(rtm.NewSubscribeUserPresence(users))
+		meta.mutex.RUnlock()
+
+		if len(ids) == MAX_PRESENCE_CHECK_BATCH || index+1 == totalUsers {
+			rtm.SendMessage(&slack.OutgoingMessage{Type: "presence_sub", IDs: ids})
 			time.Sleep(time.Second)
-			users = nil
+			ids = nil
 		}
 	}
 
-	log.Info("All users subscribed for presence events")
+	log.Info("Presence query messages successfully sended (%d users)", counter)
 }
 
 // fetchInitialInfo fetch initial info
@@ -335,10 +356,6 @@ func updateUserDND(id string, status slack.DNDStatus) {
 
 // updateUserPresence update user presence
 func updateUserPresence(ids []string, online bool) {
-	if len(ids) > 1 {
-		log.Info("Got batched presence status (%d events)", len(ids))
-	}
-
 	for _, id := range ids {
 		data, ok := store.IDIndex.Get(id)
 
@@ -348,6 +365,15 @@ func updateUserPresence(ids []string, online bool) {
 		}
 
 		meta := data.(*userMeta)
+
+		meta.mutex.RLock()
+
+		if meta.Online == online {
+			meta.mutex.RUnlock()
+			continue
+		}
+
+		meta.mutex.RUnlock()
 
 		meta.mutex.Lock()
 		meta.Online = online
