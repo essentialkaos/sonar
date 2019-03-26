@@ -265,7 +265,7 @@ func sendPresenceQuery() {
 		}
 	}
 
-	log.Info("Presence query messages successfully sended (%d users)", counter)
+	log.Info("Presence query messages successfully sent (%d users)", counter)
 }
 
 // fetchInitialInfo fetch initial info
