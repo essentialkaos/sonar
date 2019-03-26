@@ -120,6 +120,8 @@ func getStatusBadge(mail string) string {
 		return svg.GetAirplane()
 	case slack.STATUS_ONCALL:
 		return svg.GetPhone()
+	case slack.STATUS_DISABLED:
+		return svg.GetBullet("")
 	default:
 		return svg.GetBullet("")
 	}

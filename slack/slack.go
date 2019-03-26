@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v10/log"
+	"pkg.re/essentialkaos/ek.v10/timeutil"
 
 	"github.com/nlopes/slack"
 
@@ -30,6 +31,7 @@ const (
 	STATUS_DND
 	STATUS_VACATION
 	STATUS_ONCALL
+	STATUS_DISABLED
 )
 
 // Status is Slack status
@@ -45,6 +47,7 @@ type userMeta struct {
 	Online     bool
 	Vacation   bool
 	OnCall     bool
+	Disabled   bool
 	DNDStart   int64
 	DNDEnd     int64
 	DNDUpdated int64
@@ -129,6 +132,10 @@ func GetStatus(mail string) Status {
 
 	meta.mutex.RLock()
 	defer meta.mutex.RUnlock()
+
+	if meta.Disabled {
+		return STATUS_DISABLED
+	}
 
 	if meta.Vacation {
 		return STATUS_VACATION
@@ -218,21 +225,26 @@ func subscribeToPresenceEvents() {
 
 	keys := store.IDIndex.Keys()
 	totalUsers := len(keys)
+	counter := 0
 
 	for index, id := range keys {
-		log.Debug("Added %s to subscribe list", id)
+		data, _ := store.IDIndex.Get(id)
+		meta := data.(*userMeta)
 
-		users = append(users, id)
+		if !meta.Disabled {
+			users = append(users, id)
+			counter++
+		}
 
 		if len(users) == MAX_SUBSCRIBE_BATCH || index+1 == totalUsers {
-			log.Info("%d users subscribed for presence events...", index+1)
+			log.Info("%d users subscribed for presence events...", counter)
 			rtm.SendMessage(rtm.NewSubscribeUserPresence(users))
 			time.Sleep(time.Second)
 			users = nil
 		}
 	}
 
-	log.Info("Subscribed to presence events for all users")
+	log.Info("All users subscribed for presence events")
 }
 
 // fetchInitialInfo fetch initial info
@@ -258,27 +270,30 @@ func fetchInitialInfo() error {
 
 // addNewUser add new user to store
 func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
-	if user.Deleted || user.IsBot {
+	if user.IsBot {
 		return
 	}
 
-	now := time.Now().Unix()
 	meta := &userMeta{mutex: &sync.RWMutex{}}
-
-	meta.Online = user.Presence == "active"
-	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
 	meta.Email = user.Profile.Email
 	meta.RealName = user.RealName
 
-	if dndInfo != nil {
-		dnd, ok := dndInfo[user.ID]
+	if !user.Deleted {
+		meta.Online = user.Presence == "active"
+		meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-		if ok {
-			meta.DNDUpdated = now
-			meta.DNDStart = int64(dnd.NextStartTimestamp)
-			meta.DNDEnd = int64(dnd.NextEndTimestamp)
+		if dndInfo != nil {
+			dnd, ok := dndInfo[user.ID]
+
+			if ok {
+				meta.DNDUpdated = time.Now().Unix()
+				meta.DNDStart = int64(dnd.NextStartTimestamp)
+				meta.DNDEnd = int64(dnd.NextEndTimestamp)
+			}
 		}
+	} else {
+		meta.Disabled = true
 	}
 
 	store.MailIndex.Set(user.Profile.Email, meta)
@@ -303,7 +318,19 @@ func updateUserDND(id string, status slack.DNDStatus) {
 	meta.DNDEnd = int64(status.NextEndTimestamp)
 	meta.mutex.Unlock()
 
-	log.Info("Updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	if meta.DNDStart < 86400 {
+		dndStart := timeutil.Format(time.Unix(meta.DNDStart, 0), "%Y/%m/%d %H:%M")
+		dndEnd := timeutil.Format(time.Unix(meta.DNDEnd, 0), "%Y/%m/%d %H:%M")
+		log.Info(
+			"Updated DND (%s ↔ %s) for user %s (%s - %s)",
+			dndStart, dndEnd, meta.Email, id, meta.RealName,
+		)
+	} else {
+		log.Info(
+			"Cleared DND for user %s (%s - %s)",
+			meta.Email, id, meta.RealName,
+		)
+	}
 }
 
 // updateUserPresence update user presence
@@ -328,7 +355,10 @@ func updateUserPresence(ids []string, online bool) {
 
 		checkUserDND(id, meta)
 
-		log.Info("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
+		log.Info(
+			"Updated presence (online: %t) for user %s (%s - %s)",
+			online, meta.Email, id, meta.RealName,
+		)
 	}
 }
 
@@ -357,7 +387,19 @@ func checkUserDND(id string, meta *userMeta) {
 	meta.DNDUpdated = now
 	meta.mutex.Unlock()
 
-	log.Info("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	if meta.DNDStart > 86400 {
+		dndStart := timeutil.Format(time.Unix(meta.DNDStart, 0), "%Y/%m/%d %H:%M")
+		dndEnd := timeutil.Format(time.Unix(meta.DNDEnd, 0), "%Y/%m/%d %H:%M")
+		log.Info(
+			"Checked and updated DND (%s ↔ %s) for user %s (%s - %s)",
+			dndStart, dndEnd, meta.Email, id, meta.RealName,
+		)
+	} else {
+		log.Info(
+			"Checked and cleared DND for user %s (%s - %s)",
+			meta.Email, id, meta.RealName,
+		)
+	}
 }
 
 // updateUserStatus user vacation status

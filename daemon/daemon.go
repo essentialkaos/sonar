@@ -30,7 +30,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.5.5"
+	VER  = "1.6.0"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
@@ -212,6 +212,12 @@ func loadMappings() {
 
 	if err != nil {
 		log.Error(err.Error())
+	}
+
+	if len(mappings) != 0 {
+		for orig, alias := range mappings {
+			log.Info("Added mapping %s → %s", orig, alias)
+		}
 	}
 }
 

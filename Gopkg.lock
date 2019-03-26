@@ -77,7 +77,7 @@
   version = "v20180529"
 
 [[projects]]
-  digest = "1:5012e94e22ef18a2607366b756f1a2d62decae56de34c097466b7e10a540e205"
+  digest = "1:5879d39421f6a91b0aad4993b366168b3e9ce62a7b7d5797e1fa0fd8564941ff"
   name = "pkg.re/essentialkaos/ek.v10"
   packages = [
     "env",
@@ -89,9 +89,11 @@
     "options",
     "path",
     "pid",
+    "pluralize",
     "signal",
     "strutil",
     "system",
+    "timeutil",
     "usage",
     "version",
   ]
@@ -114,6 +116,7 @@
     "pkg.re/essentialkaos/ek.v10/options",
     "pkg.re/essentialkaos/ek.v10/pid",
     "pkg.re/essentialkaos/ek.v10/signal",
+    "pkg.re/essentialkaos/ek.v10/timeutil",
     "pkg.re/essentialkaos/ek.v10/usage",
   ]
   solver-name = "gps-cdcl"
