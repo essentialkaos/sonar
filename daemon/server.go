@@ -10,7 +10,7 @@ package daemon
 import (
 	"bytes"
 
-	"pkg.re/essentialkaos/ek.v9/log"
+	"pkg.re/essentialkaos/ek.v10/log"
 
 	"github.com/valyala/fasthttp"
 
@@ -20,7 +20,7 @@ import (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Points colors
+// Bullets colors
 const (
 	COLOR_ONLINE = "#6DC185"
 	COLOR_DND    = "#E7505A"
@@ -116,10 +116,14 @@ func getStatusBadge(mail string) string {
 		return svg.GetBullet(COLOR_ONLINE)
 	case slack.STATUS_DND:
 		return svg.GetBullet(COLOR_DND)
+	case slack.STATUS_DND_OFFLINE:
+		return svg.GetDND()
 	case slack.STATUS_VACATION:
 		return svg.GetAirplane()
 	case slack.STATUS_ONCALL:
 		return svg.GetPhone()
+	case slack.STATUS_DISABLED:
+		return svg.GetBullet("")
 	default:
 		return svg.GetBullet("")
 	}

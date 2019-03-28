@@ -12,15 +12,15 @@ import (
 	"runtime"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/fmtc"
-	"pkg.re/essentialkaos/ek.v9/fsutil"
-	"pkg.re/essentialkaos/ek.v9/jsonutil"
-	"pkg.re/essentialkaos/ek.v9/knf"
-	"pkg.re/essentialkaos/ek.v9/log"
-	"pkg.re/essentialkaos/ek.v9/options"
-	"pkg.re/essentialkaos/ek.v9/pid"
-	"pkg.re/essentialkaos/ek.v9/signal"
-	"pkg.re/essentialkaos/ek.v9/usage"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v10/jsonutil"
+	"pkg.re/essentialkaos/ek.v10/knf"
+	"pkg.re/essentialkaos/ek.v10/log"
+	"pkg.re/essentialkaos/ek.v10/options"
+	"pkg.re/essentialkaos/ek.v10/pid"
+	"pkg.re/essentialkaos/ek.v10/signal"
+	"pkg.re/essentialkaos/ek.v10/usage"
 
 	"github.com/essentialkaos/sonar/slack"
 )
@@ -30,8 +30,8 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.5.3"
-	DESC = "Utility for showing user Slack status in Jira"
+	VER  = "1.6.0"
+	DESC = "Utility for showing user Slack status in JIRA"
 )
 
 // Options
@@ -212,6 +212,12 @@ func loadMappings() {
 
 	if err != nil {
 		log.Error(err.Error())
+	}
+
+	if len(mappings) != 0 {
+		for orig, alias := range mappings {
+			log.Info("Added mapping %s → %s", orig, alias)
+		}
 	}
 }
 

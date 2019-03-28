@@ -8,13 +8,16 @@ package slack
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"net/url"
 	"strings"
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v9/log"
+	"pkg.re/essentialkaos/ek.v10/log"
+	"pkg.re/essentialkaos/ek.v10/pluralize"
+	"pkg.re/essentialkaos/ek.v10/timeutil"
 
-	"pkg.re/essentialkaos/slack.v3"
+	"github.com/nlopes/slack"
 
 	"github.com/orcaman/concurrent-map"
 )
@@ -27,12 +30,17 @@ const (
 	STATUS_OFFLINE
 	STATUS_ONLINE
 	STATUS_DND
+	STATUS_DND_OFFLINE
 	STATUS_VACATION
 	STATUS_ONCALL
+	STATUS_DISABLED
 )
 
 // Status is Slack status
 type Status uint8
+
+// MAX_PRESENCE_CHECK_BATCH maximum number of users per batch for checking presence
+const MAX_PRESENCE_CHECK_BATCH = 100
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -40,6 +48,7 @@ type userMeta struct {
 	Online     bool
 	Vacation   bool
 	OnCall     bool
+	Disabled   bool
 	DNDStart   int64
 	DNDEnd     int64
 	DNDUpdated int64
@@ -58,6 +67,11 @@ type dataStore struct {
 	IDIndex cmap.ConcurrentMap
 }
 
+// slackLogProxy is proxy logger for slack
+type slackLogProxy struct {
+	Prefix string
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // slack client
@@ -72,15 +86,24 @@ var store *dataStore
 // mail mappings
 var mappings map[string]string
 
+// connection flag
+var connected bool
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 // StartObserver start status observer
 func StartObserver(token string, mp map[string]string) error {
-	client = slack.New(token)
-	client.Config.BatchPresenceAware = true
-	client.Config.PresenceSub = true
+	client = slack.New(
+		token,
+		slack.OptionLog(&slackLogProxy{"SLACK:"}), // disabled by default, use for debug purposes
+	)
 
-	rtm = client.NewRTM()
+	rtm = client.NewRTM(
+		slack.RTMOptionConnParams(url.Values{
+			"batch_presence_aware": {"1"},
+		}),
+	)
+
 	mappings = mp
 
 	store = &dataStore{cmap.New(), cmap.New()}
@@ -92,6 +115,7 @@ func StartObserver(token string, mp map[string]string) error {
 	}
 
 	go rtmLoop()
+	go presenceCheckLoop()
 
 	return nil
 }
@@ -114,6 +138,10 @@ func GetStatus(mail string) Status {
 	meta.mutex.RLock()
 	defer meta.mutex.RUnlock()
 
+	if meta.Disabled {
+		return STATUS_DISABLED
+	}
+
 	if meta.Vacation {
 		return STATUS_VACATION
 	}
@@ -128,6 +156,10 @@ func GetStatus(mail string) Status {
 		}
 
 		return STATUS_ONLINE
+	}
+
+	if meta.IsDND() {
+		return STATUS_DND_OFFLINE
 	}
 
 	return STATUS_OFFLINE
@@ -162,13 +194,15 @@ func rtmLoop() {
 				log.Info("Connecting to Slack...")
 
 			case *slack.ConnectedEvent:
+				connected = true
 				log.Info("Connected to Slack")
 
-			case *slack.HelloEvent:
-				subscribeToPresenceEvents()
-
 			case *slack.DisconnectedEvent:
+				connected = false
 				log.Warn("Disconnected from Slack")
+
+			case *slack.HelloEvent:
+				sendPresenceQuery()
 
 			case *slack.DNDUpdatedEvent:
 				ev := event.Data.(*slack.DNDUpdatedEvent)
@@ -187,7 +221,6 @@ func rtmLoop() {
 
 				if !store.IDIndex.Has(ev.User.ID) {
 					addNewUser(ev.User, nil)
-					subscribeToPresenceEvents()
 				} else {
 					updateUserStatus(ev.User)
 				}
@@ -196,22 +229,52 @@ func rtmLoop() {
 	}
 }
 
-// subscribeToPresenceEvents subscribe bot to events about presence change for all users
-func subscribeToPresenceEvents() {
-	var usersToSub []string
+// presenceCheckLoop is presence check loop
+func presenceCheckLoop() {
+	for range time.NewTicker(3 * time.Minute).C {
+		if connected {
+			sendPresenceQuery()
+		}
+	}
+}
 
-	for _, id := range store.IDIndex.Keys() {
-		log.Debug("Added %s to subscribe list", id)
-		usersToSub = append(usersToSub, id)
+// sendPresenceQuery send presence query message
+func sendPresenceQuery() {
+	var ids []string
+
+	keys := store.IDIndex.Keys()
+	totalUsers := len(keys)
+	counter := 0
+
+	log.Info(
+		"Sending presence query messages (%s per message)...",
+		pluralize.Pluralize(MAX_PRESENCE_CHECK_BATCH, "user", "users"),
+	)
+
+	for index, id := range keys {
+		data, _ := store.IDIndex.Get(id)
+		meta := data.(*userMeta)
+
+		meta.mutex.RLock()
+
+		if !meta.Disabled {
+			ids = append(ids, id)
+			counter++
+		}
+
+		meta.mutex.RUnlock()
+
+		if len(ids) == MAX_PRESENCE_CHECK_BATCH || index+1 == totalUsers {
+			rtm.SendMessage(&slack.OutgoingMessage{Type: "presence_sub", IDs: ids})
+			time.Sleep(time.Second)
+			ids = nil
+		}
 	}
 
-	err := rtm.PresenceSub(usersToSub)
-
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	log.Info("Subscribed to presence events for all users")
+	log.Info(
+		"Presence query messages successfully sent (%s)",
+		pluralize.Pluralize(counter, "user", "users"),
+	)
 }
 
 // fetchInitialInfo fetch initial info
@@ -237,27 +300,30 @@ func fetchInitialInfo() error {
 
 // addNewUser add new user to store
 func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
-	if user.Deleted || user.IsBot {
+	if user.IsBot {
 		return
 	}
 
-	now := time.Now().Unix()
 	meta := &userMeta{mutex: &sync.RWMutex{}}
-
-	meta.Online = user.Presence == "active"
-	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
 	meta.Email = user.Profile.Email
 	meta.RealName = user.RealName
 
-	if dndInfo != nil {
-		dnd, ok := dndInfo[user.ID]
+	if !user.Deleted {
+		meta.Online = user.Presence == "active"
+		meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-		if ok {
-			meta.DNDUpdated = now
-			meta.DNDStart = int64(dnd.NextStartTimestamp)
-			meta.DNDEnd = int64(dnd.NextEndTimestamp)
+		if dndInfo != nil {
+			dnd, ok := dndInfo[user.ID]
+
+			if ok {
+				meta.DNDUpdated = time.Now().Unix()
+				meta.DNDStart = int64(dnd.NextStartTimestamp)
+				meta.DNDEnd = int64(dnd.NextEndTimestamp)
+			}
 		}
+	} else {
+		meta.Disabled = true
 	}
 
 	store.MailIndex.Set(user.Profile.Email, meta)
@@ -282,15 +348,23 @@ func updateUserDND(id string, status slack.DNDStatus) {
 	meta.DNDEnd = int64(status.NextEndTimestamp)
 	meta.mutex.Unlock()
 
-	log.Info("Updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	if meta.DNDStart < 86400 {
+		dndStart := timeutil.Format(time.Unix(meta.DNDStart, 0), "%Y/%m/%d %H:%M")
+		dndEnd := timeutil.Format(time.Unix(meta.DNDEnd, 0), "%Y/%m/%d %H:%M")
+		log.Info(
+			"Updated DND (%s ↔ %s) for user %s (%s - %s)",
+			dndStart, dndEnd, meta.Email, id, meta.RealName,
+		)
+	} else {
+		log.Info(
+			"Cleared DND for user %s (%s - %s)",
+			meta.Email, id, meta.RealName,
+		)
+	}
 }
 
 // updateUserPresence update user presence
 func updateUserPresence(ids []string, online bool) {
-	if len(ids) > 1 {
-		log.Info("Got batched presence status (%d events)", len(ids))
-	}
-
 	for _, id := range ids {
 		data, ok := store.IDIndex.Get(id)
 
@@ -301,13 +375,25 @@ func updateUserPresence(ids []string, online bool) {
 
 		meta := data.(*userMeta)
 
+		meta.mutex.RLock()
+
+		if meta.Online == online {
+			meta.mutex.RUnlock()
+			continue
+		}
+
+		meta.mutex.RUnlock()
+
 		meta.mutex.Lock()
 		meta.Online = online
 		meta.mutex.Unlock()
 
 		checkUserDND(id, meta)
 
-		log.Info("Updated presence for user %s (%s - %s)", meta.Email, id, meta.RealName)
+		log.Info(
+			"Updated presence (online: %t) for user %s (%s - %s)",
+			online, meta.Email, id, meta.RealName,
+		)
 	}
 }
 
@@ -336,7 +422,14 @@ func checkUserDND(id string, meta *userMeta) {
 	meta.DNDUpdated = now
 	meta.mutex.Unlock()
 
-	log.Info("Checked and updated DND for user %s (%s - %s)", meta.Email, id, meta.RealName)
+	if meta.DNDStart > 86400 {
+		dndStart := timeutil.Format(time.Unix(meta.DNDStart, 0), "%Y/%m/%d %H:%M")
+		dndEnd := timeutil.Format(time.Unix(meta.DNDEnd, 0), "%Y/%m/%d %H:%M")
+		log.Info(
+			"Checked and updated DND (%s ↔ %s) for user %s (%s - %s)",
+			dndStart, dndEnd, meta.Email, id, meta.RealName,
+		)
+	}
 }
 
 // updateUserStatus user vacation status
@@ -371,4 +464,12 @@ func updateUserStatus(user slack.User) {
 	meta.mutex.Unlock()
 
 	log.Info("Checked status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+}
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+// Output writes log message to default logger with prefix
+func (s *slackLogProxy) Output(calldepth int, message string) error {
+	_, err := log.Info("%s %s", s.Prefix, message)
+	return err
 }

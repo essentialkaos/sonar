@@ -11,6 +11,8 @@
 
 `Sonar` is a utility for showing user Slack status in Atlassian Jira.
 
+### Screenshots
+
 <p align="center">
   <img src="https://gh.kaos.st/sonar-preview.png" alt="Sonar Preview">
   <i>Sonar in Jira 6.x (with <a href="https://github.com/essentialkaos/atlassian-remixed-theme">Remixed Theme</a>)</i>
@@ -38,13 +40,13 @@ Go to `atlassian-jira/WEB-INF/classes/templates/plugins/userformat` and modify n
 
 **actionProfileLink.vm**
 
-```
+```html
 <a $!{userHoverAttributes} id="$!{id}" href="${baseurl}/secure/ViewProfile.jspa?name=${velocityhelper.urlencode($username)}">${renderedAvatarImg} ${author}</a><img class="slack-status" src="https://sonar.domain.com/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 ```
 
 **profileLinkWithAvatar.vm**
 
-```
+```html
 ${textutils.htmlEncode($fullname)}<img class="slack-status" src="https://sonar.domain.com/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 
 ...
@@ -54,7 +56,7 @@ ${textutils.htmlEncode($username)}<img class="slack-status" src="https://sonar.d
 
 **avatarFullNameHover.vm**
 
-```
+```html
 $textutils.htmlEncode($fullname)
 <img class="slack-status" src="https://sonar.domain.com/status.svg?token=YOUR_TOKEN_HERE&mail=$user.emailAddress" />
 
