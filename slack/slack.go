@@ -425,11 +425,6 @@ func checkUserDND(id string, meta *userMeta) {
 			"Checked and updated DND (%s ↔ %s) for user %s (%s - %s)",
 			dndStart, dndEnd, meta.Email, id, meta.RealName,
 		)
-	} else {
-		log.Info(
-			"Checked and cleared DND for user %s (%s - %s)",
-			meta.Email, id, meta.RealName,
-		)
 	}
 }
 
