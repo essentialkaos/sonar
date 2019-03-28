@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"pkg.re/essentialkaos/ek.v10/log"
+	"pkg.re/essentialkaos/ek.v10/pluralize"
 	"pkg.re/essentialkaos/ek.v10/timeutil"
 
 	"github.com/nlopes/slack"
@@ -246,8 +247,8 @@ func sendPresenceQuery() {
 	counter := 0
 
 	log.Info(
-		"Sending presence query messages (%d users per message)...",
-		MAX_PRESENCE_CHECK_BATCH,
+		"Sending presence query messages (%s per message)...",
+		pluralize.Pluralize(MAX_PRESENCE_CHECK_BATCH, "user", "users"),
 	)
 
 	for index, id := range keys {
@@ -270,7 +271,10 @@ func sendPresenceQuery() {
 		}
 	}
 
-	log.Info("Presence query messages successfully sent (%d users)", counter)
+	log.Info(
+		"Presence query messages successfully sent (%s)",
+		pluralize.Pluralize(counter, "user", "users"),
+	)
 }
 
 // fetchInitialInfo fetch initial info
