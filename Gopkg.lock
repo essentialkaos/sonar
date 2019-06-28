@@ -10,7 +10,7 @@
   version = "v1.4.0"
 
 [[projects]]
-  digest = "1:aaa8e0e7e35d92e21daed3f241832cee73d15ca1cd3302ba3843159a959a7eac"
+  digest = "1:823dc0f8e4cdad8d91e6aba4cdd985a035596a8aa02e9d2abf1bec347894c41f"
   name = "github.com/klauspost/compress"
   packages = [
     "flate",
@@ -18,16 +18,16 @@
     "zlib",
   ]
   pruneopts = "UT"
-  revision = "30be6041bed523c18e269a700ebd9c2ea9328574"
-  version = "v1.4.1"
+  revision = "7a873649b01a9669308e8d58b6bcbbccc0b06b5d"
+  version = "v1.7.1"
 
 [[projects]]
-  digest = "1:2d643962fac133904694fffa959bc3c5dcfdcee38c6f5ffdd99a3c93eb9c835c"
+  digest = "1:923c4d7194b42e054b2eb8a6c62824ac55e23ececc1c7e48d4da69c971c55954"
   name = "github.com/klauspost/cpuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e7e905edc00ea8827e58662220139109efea09db"
-  version = "v1.2.0"
+  revision = "05a8198c0f5a27739aec358908d7e12c64ce6eb7"
+  version = "v1.2.1"
 
 [[projects]]
   digest = "1:7711bc85fa91b919713feda232ffe0bd4ebb0e8426b9c0de6c6f476e0eb9b7c2"
@@ -65,7 +65,8 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:15ad8a80098fcc7a194b9db6b26d74072a852e4faa957848c8118193d3c69230"
+  branch = "master"
+  digest = "1:ae1322db6af7b1244fbd2f6e25c4406bd16ce348f1b909da91b2a0eef9edff65"
   name = "github.com/valyala/fasthttp"
   packages = [
     ".",
@@ -73,11 +74,10 @@
     "stackless",
   ]
   pruneopts = "UT"
-  revision = "e5f51c11919d4f66400334047b897ef0a94c6f3c"
-  version = "v20180529"
+  revision = "9ba4cef1bac8ebc8fe71123bd20cfc681fdb78a8"
 
 [[projects]]
-  digest = "1:5879d39421f6a91b0aad4993b366168b3e9ce62a7b7d5797e1fa0fd8564941ff"
+  digest = "1:8d5ea157aeea06563afeac477914b1f33278c8535d8676d9fbc1d3514def8958"
   name = "pkg.re/essentialkaos/ek.v10"
   packages = [
     "env",
@@ -86,6 +86,7 @@
     "jsonutil",
     "knf",
     "log",
+    "mathutil",
     "options",
     "path",
     "pid",
@@ -98,8 +99,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "b2d1abc129243343f9b6b3d1f36b9c2f2c80d760"
-  version = "v10.8.0"
+  revision = "6d62572a7a43ac5d4ae2c53694869ed5aa5066e7"
+  version = "v10.12.0"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -115,6 +116,7 @@
     "pkg.re/essentialkaos/ek.v10/log",
     "pkg.re/essentialkaos/ek.v10/options",
     "pkg.re/essentialkaos/ek.v10/pid",
+    "pkg.re/essentialkaos/ek.v10/pluralize",
     "pkg.re/essentialkaos/ek.v10/signal",
     "pkg.re/essentialkaos/ek.v10/timeutil",
     "pkg.re/essentialkaos/ek.v10/usage",

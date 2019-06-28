@@ -48,7 +48,7 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.6.0
+Version:         1.6.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -137,6 +137,10 @@ exit 0
 ################################################################################
 
 %changelog
+* Sat Jun 29 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.1-0
+- fasthttp updated to the latest version
+- ek package updated to the latest stable version
+
 * Mon Mar 25 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.0-0
 - Improved mechanics of checking users presence
 - Added support of debug slack logging
