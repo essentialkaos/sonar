@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/sonar.svg"/></a></p>
 
 <p align="center">
-  <a href="https://travis-ci.org/essentialkaos/sonar"><img src="https://travis-ci.org/essentialkaos/sonar.svg?branch=master" alt="TravisCI" /></a>
+  <a href="https://travis-ci.com/essentialkaos/sonar"><img src="https://travis-ci.com/essentialkaos/sonar.svg?branch=master" alt="TravisCI" /></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-sonar-master"><img alt="codebeat badge" src="https://codebeat.co/badges/49715c23-4ead-4edb-a351-b4c49cf8d061" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/sonar"><img src="https://goreportcard.com/badge/github.com/essentialkaos/sonar" alt="GoReportCard" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg" alt="License" /></a>
@@ -76,8 +76,8 @@ Also, you can add `sonar.js` to your announcement banner for a periodic status u
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![Build Status](https://travis-ci.org/essentialkaos/sonar.svg?branch=master)](https://travis-ci.org/essentialkaos/sonar) |
-| `develop` | [![Build Status](https://travis-ci.org/essentialkaos/sonar.svg?branch=develop)](https://travis-ci.org/essentialkaos/sonar) |
+| `master` | [![Build Status](https://travis-ci.com/essentialkaos/sonar.svg?branch=master)](https://travis-ci.com/essentialkaos/sonar) |
+| `develop` | [![Build Status](https://travis-ci.com/essentialkaos/sonar.svg?branch=develop)](https://travis-ci.com/essentialkaos/sonar) |
 
 ### Contributing
 
