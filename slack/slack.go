@@ -252,7 +252,7 @@ func sendPresenceQuery() {
 
 	log.Info(
 		"Sending presence query messages (%s per message)…",
-		pluralize.Pluralize(MAX_PRESENCE_CHECK_BATCH, "user", "users"),
+		pluralize.P("%d %s", MAX_PRESENCE_CHECK_BATCH, "user", "users"),
 	)
 
 	for index, id := range keys {
@@ -277,19 +277,21 @@ func sendPresenceQuery() {
 
 	log.Info(
 		"Presence query messages successfully sent (%s)",
-		pluralize.Pluralize(counter, "user", "users"),
+		pluralize.P("%d %s", counter, "user", "users"),
 	)
 }
 
 // fetchInitialInfo fetch initial info
 func fetchInitialInfo() error {
+	log.Info("Fetching initial data…")
+
 	users, err := fetchTeamUsers()
 
 	if err != nil {
 		return fmt.Errorf("Can't fetch users: %v", err)
 	}
 
-	dndInfo, err := client.GetDNDTeamInfo(nil)
+	dndInfo, err := fetchDNDInfo(users)
 
 	if err != nil {
 		return fmt.Errorf("Can't fetch DND info: %v", err)
@@ -298,6 +300,11 @@ func fetchInitialInfo() error {
 	for _, user := range users {
 		addNewUser(user, dndInfo)
 	}
+
+	log.Info(
+		"Information about %d users added to storage (%d have DND)",
+		len(users), len(dndInfo),
+	)
 
 	return nil
 }
@@ -481,7 +488,7 @@ func fetchTeamUsers() ([]slack.User, error) {
 	var result []slack.User
 
 	for _, user := range users {
-		if user.Deleted || user.IsBot || user.IsStranger {
+		if user.IsBot || user.IsStranger {
 			continue
 		}
 
@@ -494,6 +501,8 @@ func fetchTeamUsers() ([]slack.User, error) {
 // fetchDNDInfo fetches DND info for all users
 func fetchDNDInfo(users []slack.User) (map[string]slack.DNDStatus, error) {
 	dndInfo := make(map[string]slack.DNDStatus)
+
+	log.Info("Fetching DND info…")
 
 	for i := 0; i < 1000; i++ {
 		ids := getUsersBatch(users, MAX_DND_BATCH, i)
@@ -510,12 +519,12 @@ func fetchDNDInfo(users []slack.User) (map[string]slack.DNDStatus, error) {
 
 		appendDNDDdata(dndInfo, info)
 
-		log.Info("Added DND info for %d users", i*MAX_DND_BATCH)
+		log.Info("Added DND info for %d users", (i+1)*MAX_DND_BATCH)
 
 		time.Sleep(3 * time.Second)
 	}
 
-	return nil, nil
+	return dndInfo, nil
 }
 
 // getUsersBatch returns batch with users IDs
@@ -530,6 +539,10 @@ func getUsersBatch(users []slack.User, size, index int) []string {
 	}
 
 	for i := start; i < end; i++ {
+		if users[i].Deleted {
+			continue
+		}
+
 		result = append(result, users[i].ID)
 	}
 
