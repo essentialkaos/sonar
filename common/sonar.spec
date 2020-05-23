@@ -48,7 +48,7 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.6.1
+Version:         1.7.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -58,13 +58,10 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.12
+BuildRequires:   golang >= 1.13
 
-Requires:        kaosv >= 2.15
-
-%if 0%{?rhel} >= 7
+Requires:        kaosv >= 2.16
 Requires:        systemd
-%endif
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -107,10 +104,8 @@ install -pm 755 %{srcdir}/common/%{name}.init \
 install -pm 644 %{srcdir}/common/%{name}.logrotate \
                 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
-%if 0%{?rhel} >= 7
 install -pDm 644 %{srcdir}/common/%{name}.service \
                  %{buildroot}%{_unitdir}/
-%endif
 
 %clean
 rm -rf %{buildroot}
@@ -128,15 +123,19 @@ exit 0
 %attr(-,%{name},%{name}) %dir %{_logdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}.knf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%if 0%{?rhel} >= 7
 %{_unitdir}/%{name}.service
-%endif
 %{_initddir}/%{name}
 %{_bindir}/%{name}
 
 ################################################################################
 
 %changelog
+* Sat May 23 2020 Anton Novojilov <andy@essentialkaos.com> - 1.7.0-0
+- Fixed problem with initial fetching of DND statuses
+- fasthttp updated to the latest version
+- ek package updated to the latest stable version 
+- Minor improvements
+
 * Sat Jun 29 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.1-0
 - fasthttp updated to the latest version
 - ek package updated to the latest stable version

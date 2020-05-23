@@ -9,18 +9,19 @@ package daemon
 
 import (
 	"os"
-	"runtime"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/fmtc"
-	"pkg.re/essentialkaos/ek.v10/fsutil"
-	"pkg.re/essentialkaos/ek.v10/jsonutil"
-	"pkg.re/essentialkaos/ek.v10/knf"
-	"pkg.re/essentialkaos/ek.v10/log"
-	"pkg.re/essentialkaos/ek.v10/options"
-	"pkg.re/essentialkaos/ek.v10/pid"
-	"pkg.re/essentialkaos/ek.v10/signal"
-	"pkg.re/essentialkaos/ek.v10/usage"
+	"pkg.re/essentialkaos/ek.v12/fmtc"
+	"pkg.re/essentialkaos/ek.v12/jsonutil"
+	"pkg.re/essentialkaos/ek.v12/knf"
+	"pkg.re/essentialkaos/ek.v12/log"
+	"pkg.re/essentialkaos/ek.v12/options"
+	"pkg.re/essentialkaos/ek.v12/pid"
+	"pkg.re/essentialkaos/ek.v12/signal"
+	"pkg.re/essentialkaos/ek.v12/usage"
+
+	knfv "pkg.re/essentialkaos/ek.v12/knf/validators"
+	knff "pkg.re/essentialkaos/ek.v12/knf/validators/fs"
 
 	"github.com/essentialkaos/sonar/slack"
 )
@@ -30,7 +31,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.6.1"
+	VER  = "1.7.0"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
@@ -83,8 +84,6 @@ var (
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func Init() {
-	runtime.GOMAXPROCS(8)
-
 	_, errs := options.Parse(optMap)
 
 	if len(errs) != 0 {
@@ -116,7 +115,7 @@ func Init() {
 	createPidFile()
 
 	log.Aux(strings.Repeat("-", 88))
-	log.Aux("%s %s starting...", APP, VER)
+	log.Aux("%s %s starting…", APP, VER)
 
 	enabled = knf.GetB(MAIN_ENABLED, true)
 
@@ -134,35 +133,23 @@ func loadConfig() {
 
 // validateConfig validate configuration file values
 func validateConfig() {
-	var permsChecker = func(config *knf.Config, prop string, value interface{}) error {
-		if !fsutil.CheckPerms(value.(string), config.GetS(prop)) {
-			switch value.(string) {
-			case "DW":
-				return fmtc.Errorf("Property %s must be path to writable directory", prop)
-			case "DX":
-				return fmtc.Errorf("Property %s must be path to executable directory", prop)
-			}
-		}
-
-		return nil
-	}
-
 	errs := knf.Validate([]*knf.Validator{
-		{MAIN_TOKEN, knf.Empty, nil},
-		{SLACK_TOKEN, knf.Empty, nil},
-		{LOG_DIR, knf.Empty, nil},
-		{LOG_FILE, knf.Empty, nil},
-		{HTTP_PORT, knf.Empty, nil},
+		{MAIN_TOKEN, knfv.Empty, nil},
+		{SLACK_TOKEN, knfv.Empty, nil},
+		{LOG_DIR, knfv.Empty, nil},
+		{LOG_FILE, knfv.Empty, nil},
+		{HTTP_PORT, knfv.Empty, nil},
 
-		{HTTP_PORT, knf.Less, 1024},
-		{HTTP_PORT, knf.Greater, 65535},
+		{HTTP_PORT, knfv.Less, 1024},
+		{HTTP_PORT, knfv.Greater, 65535},
 
-		{SLACK_TOKEN, knf.NotLen, 42},
-		{SLACK_TOKEN, knf.NotPrefix, "xoxb-"},
+		{SLACK_TOKEN, knfv.NotLen, 42},
+		{SLACK_TOKEN, knfv.NotPrefix, "xoxb-"},
 
-		{LOG_DIR, permsChecker, "DW"},
-		{LOG_DIR, permsChecker, "DX"},
-		{LOG_LEVEL, knf.NotContains, []string{"debug", "info", "warn", "error", "crit"}},
+		{LOG_DIR, knff.Perms, "DW"},
+		{LOG_DIR, knff.Perms, "DX"},
+
+		{LOG_LEVEL, knfv.NotContains, []string{"debug", "info", "warn", "error", "crit"}},
 	})
 
 	if len(errs) != 0 {
@@ -176,7 +163,7 @@ func validateConfig() {
 	}
 }
 
-// registerSignalHandlers register signal handlers
+// registerSignalHandlers registers signal handlers
 func registerSignalHandlers() {
 	signal.Handlers{
 		signal.TERM: termSignalHandler,
@@ -185,7 +172,7 @@ func registerSignalHandlers() {
 	}.TrackAsync()
 }
 
-// setupLogger setup logger
+// setupLogger setups logger
 func setupLogger() {
 	err := log.Set(knf.GetS(LOG_FILE), knf.GetM(LOG_PERMS, 644))
 
@@ -200,7 +187,7 @@ func setupLogger() {
 	}
 }
 
-// loadMappings load mappings data
+// loadMappings loads mappings data
 func loadMappings() {
 	if knf.GetS(MAIN_MAPPINGS) == "" {
 		return
@@ -208,7 +195,7 @@ func loadMappings() {
 
 	mappings = make(map[string]string)
 
-	err := jsonutil.DecodeFile(knf.GetS(MAIN_MAPPINGS), &mappings)
+	err := jsonutil.Read(knf.GetS(MAIN_MAPPINGS), &mappings)
 
 	if err != nil {
 		log.Error(err.Error())
@@ -221,7 +208,7 @@ func loadMappings() {
 	}
 }
 
-// loadBots load bots emails
+// loadBots loads bots emails
 func loadBots() {
 	if knf.GetS(MAIN_BOTS) == "" {
 		return
@@ -229,14 +216,14 @@ func loadBots() {
 
 	bots = make(map[string]bool)
 
-	err := jsonutil.DecodeFile(knf.GetS(MAIN_BOTS), &bots)
+	err := jsonutil.Read(knf.GetS(MAIN_BOTS), &bots)
 
 	if err != nil {
 		log.Error(err.Error())
 	}
 }
 
-// createPidFile create PID file
+// createPidFile creates PID file
 func createPidFile() {
 	pid.Dir = PID_DIR
 
@@ -247,7 +234,7 @@ func createPidFile() {
 	}
 }
 
-// start start service
+// start starts the service
 func start() {
 	loadMappings()
 	loadBots()
@@ -274,21 +261,21 @@ func start() {
 	shutdown(0)
 }
 
-// INT signal handler
+// intSignalHandler is INT signal handler
 func intSignalHandler() {
-	log.Aux("Received INT signal, shutdown...")
+	log.Aux("Received INT signal, shutdown…")
 	shutdown(0)
 }
 
-// TERM signal handler
+// termSignalHandler is TERM signal handler
 func termSignalHandler() {
-	log.Aux("Received TERM signal, shutdown...")
+	log.Aux("Received TERM signal, shutdown…")
 	shutdown(0)
 }
 
-// HUP signal handler
+// hupSignalHandler is HUP signal handler
 func hupSignalHandler() {
-	log.Info("Received HUP signal, log will be reopened...")
+	log.Info("Received HUP signal, log will be reopened…")
 	log.Reopen()
 	log.Info("Log reopened by HUP signal")
 }
@@ -309,7 +296,7 @@ func printErrorAndExit(f string, a ...interface{}) {
 	os.Exit(1)
 }
 
-// shutdown stop deamon
+// shutdown stops deamon
 func shutdown(code int) {
 	pid.Remove(PID_FILE)
 	os.Exit(code)
@@ -317,6 +304,7 @@ func shutdown(code int) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// showUsage prints usage info
 func showUsage() {
 	info := usage.NewInfo()
 
@@ -328,6 +316,7 @@ func showUsage() {
 	info.Render()
 }
 
+// showAbout prints information about license and version
 func showAbout() {
 	about := &usage.About{
 		App:     APP,

@@ -8,16 +8,17 @@ package slack
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v10/log"
-	"pkg.re/essentialkaos/ek.v10/pluralize"
-	"pkg.re/essentialkaos/ek.v10/timeutil"
+	"pkg.re/essentialkaos/ek.v12/log"
+	"pkg.re/essentialkaos/ek.v12/pluralize"
+	"pkg.re/essentialkaos/ek.v12/timeutil"
 
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 
 	"github.com/orcaman/concurrent-map"
 )
@@ -41,6 +42,9 @@ type Status uint8
 
 // MAX_PRESENCE_CHECK_BATCH maximum number of users per batch for checking presence
 const MAX_PRESENCE_CHECK_BATCH = 100
+
+// MAX_DND_BATCH maximum number of users per batch for getting DND status
+const MAX_DND_BATCH = 50
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -191,7 +195,7 @@ func rtmLoop() {
 			switch event.Data.(type) {
 
 			case *slack.ConnectingEvent:
-				log.Info("Connecting to Slack...")
+				log.Info("Connecting to Slack…")
 
 			case *slack.ConnectedEvent:
 				connected = true
@@ -247,7 +251,7 @@ func sendPresenceQuery() {
 	counter := 0
 
 	log.Info(
-		"Sending presence query messages (%s per message)...",
+		"Sending presence query messages (%s per message)…",
 		pluralize.Pluralize(MAX_PRESENCE_CHECK_BATCH, "user", "users"),
 	)
 
@@ -279,16 +283,16 @@ func sendPresenceQuery() {
 
 // fetchInitialInfo fetch initial info
 func fetchInitialInfo() error {
-	users, err := client.GetUsers()
+	users, err := fetchTeamUsers()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Can't fetch users: %v", err)
 	}
 
 	dndInfo, err := client.GetDNDTeamInfo(nil)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Can't fetch DND info: %v", err)
 	}
 
 	for _, user := range users {
@@ -464,6 +468,79 @@ func updateUserStatus(user slack.User) {
 	meta.mutex.Unlock()
 
 	log.Info("Checked status for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+}
+
+// fetchTeamUsers fetches users from Slack
+func fetchTeamUsers() ([]slack.User, error) {
+	users, err := client.GetUsers()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var result []slack.User
+
+	for _, user := range users {
+		if user.Deleted || user.IsBot || user.IsStranger {
+			continue
+		}
+
+		result = append(result, user)
+	}
+
+	return result, nil
+}
+
+// fetchDNDInfo fetches DND info for all users
+func fetchDNDInfo(users []slack.User) (map[string]slack.DNDStatus, error) {
+	dndInfo := make(map[string]slack.DNDStatus)
+
+	for i := 0; i < 1000; i++ {
+		ids := getUsersBatch(users, MAX_DND_BATCH, i)
+
+		if len(ids) == 0 {
+			break
+		}
+
+		info, err := client.GetDNDTeamInfo(ids)
+
+		if err != nil {
+			return nil, err
+		}
+
+		appendDNDDdata(dndInfo, info)
+
+		log.Info("Added DND info for %d users", i*MAX_DND_BATCH)
+
+		time.Sleep(3 * time.Second)
+	}
+
+	return nil, nil
+}
+
+// getUsersBatch returns batch with users IDs
+func getUsersBatch(users []slack.User, size, index int) []string {
+	var result []string
+
+	start := size * index
+	end := start + size
+
+	if end >= len(users) {
+		end = len(users) - 1
+	}
+
+	for i := start; i < end; i++ {
+		result = append(result, users[i].ID)
+	}
+
+	return result
+}
+
+// appendDNDDdata appends new dnd data
+func appendDNDDdata(target, source map[string]slack.DNDStatus) {
+	for id, status := range source {
+		target[id] = status
+	}
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
