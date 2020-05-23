@@ -132,8 +132,9 @@ exit 0
 %changelog
 * Sat May 23 2020 Anton Novojilov <andy@essentialkaos.com> - 1.7.0-0
 - Fixed problem with initial fetching of DND statuses
+- nlopes/slack package replaced by slack-go/slack
 - fasthttp updated to the latest version
-- ek package updated to the latest stable version 
+- ek package updated to the latest stable version
 - Minor improvements
 
 * Sat Jun 29 2019 Anton Novojilov <andy@essentialkaos.com> - 1.6.1-0
