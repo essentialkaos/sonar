@@ -2,15 +2,23 @@
 
 
 [[projects]]
-  digest = "1:7b5c6e2eeaa9ae5907c391a91c132abfd5c9e8a784a341b5625e750c67e6825d"
+  digest = "1:de3be5ae7441a5bc8cb2845a4fc2c0e4fa5a3fe917715b8df49660ff704e9380"
+  name = "github.com/andybalholm/brotli"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b60f0d972eeb79a5fba5fb60f1e0568bc8c97e42"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:6d29f02f0f01c627c2be40fb7347669a9ff2aa215cb97747294c1d13ffa74bdd"
   name = "github.com/gorilla/websocket"
   packages = ["."]
   pruneopts = "UT"
-  revision = "66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d"
-  version = "v1.4.0"
+  revision = "b65e62901fc1c0d968042419e74789f6af455eb9"
+  version = "v1.4.2"
 
 [[projects]]
-  digest = "1:823dc0f8e4cdad8d91e6aba4cdd985a035596a8aa02e9d2abf1bec347894c41f"
+  digest = "1:6dbdb48005dbf5814c8a9ccf12fc25a4f1c2c19d6261815c5b16558fe489afe8"
   name = "github.com/klauspost/compress"
   packages = [
     "flate",
@@ -18,43 +26,37 @@
     "zlib",
   ]
   pruneopts = "UT"
-  revision = "7a873649b01a9669308e8d58b6bcbbccc0b06b5d"
-  version = "v1.7.1"
-
-[[projects]]
-  digest = "1:923c4d7194b42e054b2eb8a6c62824ac55e23ececc1c7e48d4da69c971c55954"
-  name = "github.com/klauspost/cpuid"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "05a8198c0f5a27739aec358908d7e12c64ce6eb7"
-  version = "v1.2.1"
-
-[[projects]]
-  digest = "1:7711bc85fa91b919713feda232ffe0bd4ebb0e8426b9c0de6c6f476e0eb9b7c2"
-  name = "github.com/nlopes/slack"
-  packages = [
-    ".",
-    "slackutilsx",
-  ]
-  pruneopts = "UT"
-  revision = "a7deeca7935c178aa865249bab511daf816288ba"
-  version = "v0.5.0"
+  revision = "f54780da70be5dede240d84a5f8db8c249b63261"
+  version = "v1.10.6"
 
 [[projects]]
   branch = "master"
-  digest = "1:8368165a1d56fb9c296eb90ed90c51cc0ce563d73c911d3a4c7cb2faa5fc544e"
+  digest = "1:618162a6fd7ef94485d136d1bdd062c49eed478144967eb050c9e3dbe9e4f26b"
   name = "github.com/orcaman/concurrent-map"
   packages = ["."]
   pruneopts = "UT"
-  revision = "2693aad1ed7517c2bb5b3a42cb8fde88b941d89d"
+  revision = "8c72a8bb44f6cfcff2abae8ebcbaaaf883331363"
 
 [[projects]]
-  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  digest = "1:9e1d37b58d17113ec3cb5608ac0382313c5b59470b94ed97d0976e69c7022314"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
-  version = "v0.8.1"
+  revision = "614d223910a179a466c1767a985424175c39b465"
+  version = "v0.9.1"
+
+[[projects]]
+  digest = "1:1b69a356a0e594ddd54d2e7a75c3016a4d6a36c872f0dc8543f3901bb07b5c82"
+  name = "github.com/slack-go/slack"
+  packages = [
+    ".",
+    "internal/errorsx",
+    "internal/timex",
+    "slackutilsx",
+  ]
+  pruneopts = "UT"
+  revision = "9d8728cd25ff74f4b98d18d994d1f8370f5608e4"
+  version = "v0.6.4"
 
 [[projects]]
   digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
@@ -66,7 +68,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ae1322db6af7b1244fbd2f6e25c4406bd16ce348f1b909da91b2a0eef9edff65"
+  digest = "1:bf365eba31a3b2cb35c3297d2bdef4f0edf6a99d5373eb1a22db8027b38a9878"
   name = "github.com/valyala/fasthttp"
   packages = [
     ".",
@@ -74,17 +76,19 @@
     "stackless",
   ]
   pruneopts = "UT"
-  revision = "9ba4cef1bac8ebc8fe71123bd20cfc681fdb78a8"
+  revision = "24410e58c0f42eeff818f08c50acac9895454816"
 
 [[projects]]
-  digest = "1:8d5ea157aeea06563afeac477914b1f33278c8535d8676d9fbc1d3514def8958"
-  name = "pkg.re/essentialkaos/ek.v10"
+  digest = "1:32a77b96625cc26ead6f49fc3de2e08463bd908c39aae353a03e95f0f0f22833"
+  name = "pkg.re/essentialkaos/ek.v12"
   packages = [
     "env",
     "fmtc",
     "fsutil",
     "jsonutil",
     "knf",
+    "knf/validators",
+    "knf/validators/fs",
     "log",
     "mathutil",
     "options",
@@ -99,27 +103,28 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "6d62572a7a43ac5d4ae2c53694869ed5aa5066e7"
-  version = "v10.12.0"
+  revision = "acc954bf31a466b19b58f6c3bf16dd721954d117"
+  version = "v12.3.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/nlopes/slack",
     "github.com/orcaman/concurrent-map",
+    "github.com/slack-go/slack",
     "github.com/valyala/fasthttp",
-    "pkg.re/essentialkaos/ek.v10/fmtc",
-    "pkg.re/essentialkaos/ek.v10/fsutil",
-    "pkg.re/essentialkaos/ek.v10/jsonutil",
-    "pkg.re/essentialkaos/ek.v10/knf",
-    "pkg.re/essentialkaos/ek.v10/log",
-    "pkg.re/essentialkaos/ek.v10/options",
-    "pkg.re/essentialkaos/ek.v10/pid",
-    "pkg.re/essentialkaos/ek.v10/pluralize",
-    "pkg.re/essentialkaos/ek.v10/signal",
-    "pkg.re/essentialkaos/ek.v10/timeutil",
-    "pkg.re/essentialkaos/ek.v10/usage",
+    "pkg.re/essentialkaos/ek.v12/fmtc",
+    "pkg.re/essentialkaos/ek.v12/jsonutil",
+    "pkg.re/essentialkaos/ek.v12/knf",
+    "pkg.re/essentialkaos/ek.v12/knf/validators",
+    "pkg.re/essentialkaos/ek.v12/knf/validators/fs",
+    "pkg.re/essentialkaos/ek.v12/log",
+    "pkg.re/essentialkaos/ek.v12/options",
+    "pkg.re/essentialkaos/ek.v12/pid",
+    "pkg.re/essentialkaos/ek.v12/pluralize",
+    "pkg.re/essentialkaos/ek.v12/signal",
+    "pkg.re/essentialkaos/ek.v12/timeutil",
+    "pkg.re/essentialkaos/ek.v12/usage",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

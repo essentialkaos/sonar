@@ -1,18 +1,18 @@
 [[constraint]]
-  name = "github.com/nlopes/slack"
-  version = "0.5.0"
+  branch = "master"
+  name = "github.com/orcaman/concurrent-map"
 
 [[constraint]]
-  name = "github.com/orcaman/concurrent-map"
-  branch = "master"
+  name = "github.com/slack-go/slack"
+  version = "0.6.4"
 
 [[constraint]]
   name = "github.com/valyala/fasthttp"
   branch = "master"
 
 [[constraint]]
-  name = "pkg.re/essentialkaos/ek.v10"
-  version = "10.12.0"
+  name = "pkg.re/essentialkaos/ek.v12"
+  version = "12.3.0"
 
 [prune]
   go-tests = true
