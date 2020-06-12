@@ -22,11 +22,11 @@
 
 ### Installation
 
-#### From ESSENTIAL KAOS Public repo for RHEL7/CentOS7
+#### From [ESSENTIAL KAOS Public Repository](https://yum.kaos.st)
 
 ```bash
-[sudo] yum install -y https://yum.kaos.st/kaos-repo-latest.el7.noarch.rpm
-[sudo] yum install sonar
+sudo yum install -y https://yum.kaos.st/get/$(uname -r).rpm
+sudo yum install sonar
 ```
 
 #### Integration with Jira
