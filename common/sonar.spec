@@ -51,7 +51,7 @@ Name:            sonar
 Version:         1.7.0
 Release:         0%{?dist}
 Group:           Applications/System
-License:         EKOL
+License:         Apache License, Version 2.0
 URL:             https://github.com/essentialkaos/sonar
 
 Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
@@ -119,7 +119,7 @@ exit 0
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE.EN LICENSE.RU
+%doc LICENSE
 %attr(-,%{name},%{name}) %dir %{_logdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}.knf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
