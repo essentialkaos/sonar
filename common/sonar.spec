@@ -4,6 +4,10 @@
 
 ################################################################################
 
+%global crc_check pushd ../SOURCES ; sha512sum -c %{SOURCE100} ; popd
+
+################################################################################
+
 %define _posixroot        /
 %define _root             /root
 %define _bin              /bin
@@ -48,7 +52,7 @@
 
 Summary:         Utility for showing user Slack status in Atlassian Jira
 Name:            sonar
-Version:         1.7.0
+Version:         1.7.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         Apache License, Version 2.0
@@ -56,9 +60,11 @@ URL:             https://github.com/essentialkaos/sonar
 
 Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
+Source100:       checksum.sha512
+
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.13
+BuildRequires:   golang >= 1.14
 
 Requires:        kaosv >= 2.16
 Requires:        systemd
@@ -73,6 +79,8 @@ Utility for showing user Slack status in Atlassian Jira.
 ################################################################################
 
 %prep
+%{crc_check}
+
 %setup -q
 
 %build
@@ -130,6 +138,9 @@ exit 0
 ################################################################################
 
 %changelog
+* Thu Sep 10 2020 Anton Novojilov <andy@essentialkaos.com> - 1.7.1-0
+- Fixed compatibility with the latest version of ek package
+
 * Sat May 23 2020 Anton Novojilov <andy@essentialkaos.com> - 1.7.0-0
 - Fixed problem with initial fetching of DND statuses
 - nlopes/slack package replaced by slack-go/slack
