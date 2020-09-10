@@ -560,6 +560,5 @@ func appendDNDDdata(target, source map[string]slack.DNDStatus) {
 
 // Output writes log message to default logger with prefix
 func (s *slackLogProxy) Output(calldepth int, message string) error {
-	_, err := log.Info("%s %s", s.Prefix, message)
-	return err
+	return log.Info("%s %s", s.Prefix, message)
 }
