@@ -18,7 +18,7 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:6dbdb48005dbf5814c8a9ccf12fc25a4f1c2c19d6261815c5b16558fe489afe8"
+  digest = "1:8d029fb6638c2f922b8b5a33aef0f07a44542a97a0cf89bf871dd837f6b3252d"
   name = "github.com/klauspost/compress"
   packages = [
     "flate",
@@ -26,8 +26,8 @@
     "zlib",
   ]
   pruneopts = "UT"
-  revision = "f54780da70be5dede240d84a5f8db8c249b63261"
-  version = "v1.10.6"
+  revision = "624d717c993151e16bf5c83e8b3c3256e412ac77"
+  version = "v1.11.0"
 
 [[projects]]
   branch = "master"
@@ -46,7 +46,7 @@
   version = "v0.9.1"
 
 [[projects]]
-  digest = "1:1b69a356a0e594ddd54d2e7a75c3016a4d6a36c872f0dc8543f3901bb07b5c82"
+  digest = "1:408bacc30859a97c72d28825aaa6f1c493fa30cec919596ecb42caa0f2b74572"
   name = "github.com/slack-go/slack"
   packages = [
     ".",
@@ -55,8 +55,8 @@
     "slackutilsx",
   ]
   pruneopts = "UT"
-  revision = "9d8728cd25ff74f4b98d18d994d1f8370f5608e4"
-  version = "v0.6.4"
+  revision = "00ecb21abfca58437ff97b9421b4211445292f17"
+  version = "v0.6.6"
 
 [[projects]]
   digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
@@ -68,7 +68,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bf365eba31a3b2cb35c3297d2bdef4f0edf6a99d5373eb1a22db8027b38a9878"
+  digest = "1:1efa3f383ef241161209d5735bb22702f7e560ea08cc1a040d9ec3ddf2bc0428"
   name = "github.com/valyala/fasthttp"
   packages = [
     ".",
@@ -76,10 +76,10 @@
     "stackless",
   ]
   pruneopts = "UT"
-  revision = "24410e58c0f42eeff818f08c50acac9895454816"
+  revision = "aa3f96c883322033099b4466c151893a3f9c2172"
 
 [[projects]]
-  digest = "1:32a77b96625cc26ead6f49fc3de2e08463bd908c39aae353a03e95f0f0f22833"
+  digest = "1:8950c3efb78ea68a428597c1565226860b701eedc0f07caf0f13183c393c70d4"
   name = "pkg.re/essentialkaos/ek.v12"
   packages = [
     "env",
@@ -103,8 +103,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "acc954bf31a466b19b58f6c3bf16dd721954d117"
-  version = "v12.3.0"
+  revision = "f0bf40e23b1c6932ef27674572830ef1592304af"
+  version = "v12.8.0"
 
 [solve-meta]
   analyzer-name = "dep"
