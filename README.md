@@ -1,10 +1,10 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/sonar.svg"/></a></p>
 
 <p align="center">
-  <a href="https://github.com/essentialkaos/sonar/actions"><img src="https://github.com/essentialkaos/sonar/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
-  <a href="https://github.com/essentialkaos/sonar/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/sonar/workflows/CodeQL/badge.svg" /></a>
-  <a href="https://codebeat.co/projects/github-com-essentialkaos-sonar-master"><img alt="codebeat badge" src="https://codebeat.co/badges/49715c23-4ead-4edb-a351-b4c49cf8d061" /></a>
-  <a href="https://goreportcard.com/report/github.com/essentialkaos/sonar"><img src="https://goreportcard.com/badge/github.com/essentialkaos/sonar" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/w/sonar/ci"><img src="https://kaos.sh/w/sonar/ci.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/r/sonar"><img src="https://kaos.sh/r/sonar.svg" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/b/sonar"><img src="https://kaos.sh/b/49715c23-4ead-4edb-a351-b4c49cf8d061.svg" alt="codebeat badge" /></a>
+  <a href="https://kaos.sh/w/sonar/codeql"><img src="https://kaos.sh/w/sonar/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
@@ -61,8 +61,8 @@ Also, you can add `sonar.js` to your announcement banner for a periodic status u
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![CI](https://github.com/essentialkaos/sonar/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/sonar/actions) |
-| `develop` | [![CI](https://github.com/essentialkaos/sonar/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/sonar/actions) |
+| `master` | [![CI](https://kaos.sh/w/sonar/ci.svg?branch=master)](https://kaos.sh/w/sonar/ci?query=branch:master) |
+| `develop` | [![CI](https://kaos.sh/w/sonar/ci.svg?branch=master)](https://kaos.sh/w/sonar/ci?query=branch:develop) |
 
 ### Contributing
 
