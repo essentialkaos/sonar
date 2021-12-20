@@ -34,7 +34,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// startHTTPServer start HTTP server
+// startHTTPServer starts HTTP server
 func startHTTPServer(ip, port string) error {
 	addr := ip + ":" + port
 
@@ -48,7 +48,7 @@ func startHTTPServer(ip, port string) error {
 	return server.ListenAndServe(addr)
 }
 
-// fastHTTPHandler handler for fast http requests
+// fastHTTPHandler is handler for all requests
 func fastHTTPHandler(ctx *fasthttp.RequestCtx) {
 	defer requestRecover(ctx)
 
@@ -83,7 +83,7 @@ func statusHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	if bytes.Equal(token, query.Peek(QUERY_MAIL)) {
+	if !bytes.Equal(token, query.Peek(QUERY_TOKEN)) {
 		ctx.SetStatusCode(404)
 		return
 	}
@@ -98,7 +98,7 @@ func statusHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetStatusCode(200)
 }
 
-// getStatusBadge return status badge
+// getStatusBadge returns status badge
 func getStatusBadge(mail string) string {
 	if !enabled {
 		return svg.GetBullet("")
