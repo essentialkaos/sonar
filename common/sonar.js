@@ -11,11 +11,20 @@ function sonarStatusReferesher() {
 
     var rnd = Math.round(Math.random() * 1000000000000);
     var marker = pointURI.indexOf("&rnd=");
+    var wasPointRefreshedEarlier = marker !== -1
 
-    if (marker == -1) {
-      point.src = point.src + "&rnd=" + rnd.toString(26);
-    } else {
+    if (wasPointRefreshedEarlier) {
       point.src = point.src.substr(0, marker) + "&rnd=" + rnd.toString(26);
+    } else {
+      point.addEventListener("error", function() {
+        this.style.visibility = "hidden";
+      });
+
+      point.addEventListener("load", function() {
+        this.style.visibility = "visible";
+      });
+      
+      point.src = point.src + "&rnd=" + rnd.toString(26);
     }
   }
 }
