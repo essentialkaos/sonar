@@ -2,7 +2,7 @@ package daemon
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2022 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -11,17 +11,17 @@ import (
 	"os"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v12/fmtc"
-	"pkg.re/essentialkaos/ek.v12/jsonutil"
-	"pkg.re/essentialkaos/ek.v12/knf"
-	"pkg.re/essentialkaos/ek.v12/log"
-	"pkg.re/essentialkaos/ek.v12/options"
-	"pkg.re/essentialkaos/ek.v12/pid"
-	"pkg.re/essentialkaos/ek.v12/signal"
-	"pkg.re/essentialkaos/ek.v12/usage"
+	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/jsonutil"
+	"github.com/essentialkaos/ek/v12/knf"
+	"github.com/essentialkaos/ek/v12/log"
+	"github.com/essentialkaos/ek/v12/options"
+	"github.com/essentialkaos/ek/v12/pid"
+	"github.com/essentialkaos/ek/v12/signal"
+	"github.com/essentialkaos/ek/v12/usage"
 
-	knfv "pkg.re/essentialkaos/ek.v12/knf/validators"
-	knff "pkg.re/essentialkaos/ek.v12/knf/validators/fs"
+	knfv "github.com/essentialkaos/ek/v12/knf/validators"
+	knff "github.com/essentialkaos/ek/v12/knf/validators/fs"
 
 	"github.com/essentialkaos/sonar/slack"
 )
@@ -31,7 +31,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.7.1"
+	VER  = "1.8.0"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
