@@ -133,7 +133,7 @@ func GetStatus(mail string) Status {
 	data, ok := store.MailIndex.Get(mail)
 
 	if !ok {
-		log.Warn("Can't find info for user %s", mail)
+		log.Debug("Can't find info for user %s", mail)
 		return STATUS_UNKNOWN
 	}
 
@@ -204,6 +204,13 @@ func rtmLoop() {
 			case *slack.DisconnectedEvent:
 				connected = false
 				log.Warn("Disconnected from Slack")
+
+			case *slack.ConnectionErrorEvent:
+				connected = false
+				log.Warn(
+					"Slack connecting error: %s",
+					event.Data.(*slack.ConnectionErrorEvent).Error(),
+				)
 
 			case *slack.HelloEvent:
 				sendPresenceQuery()
@@ -311,7 +318,7 @@ func fetchInitialInfo() error {
 
 // addNewUser add new user to store
 func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
-	if user.IsBot {
+	if user.IsBot || user.Deleted {
 		return
 	}
 
@@ -445,7 +452,7 @@ func checkUserDND(id string, meta *userMeta) {
 
 // updateUserStatus user vacation status
 func updateUserStatus(user slack.User) {
-	if user.IsBot {
+	if user.IsBot || user.Deleted {
 		return
 	}
 

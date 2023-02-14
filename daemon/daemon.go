@@ -143,7 +143,7 @@ func validateConfig() {
 		{HTTP_PORT, knfv.Less, 1024},
 		{HTTP_PORT, knfv.Greater, 65535},
 
-		{SLACK_TOKEN, knfv.NotPrefix, "xoxp-"},
+		{SLACK_TOKEN, knfv.NotPrefix, "xoxb-"},
 
 		{LOG_DIR, knff.Perms, "DW"},
 		{LOG_DIR, knff.Perms, "DX"},
