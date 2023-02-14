@@ -1,6 +1,8 @@
 module github.com/essentialkaos/sonar
 
-go 1.17
+go 1.19
+
+replace github.com/slack-go/slack => ../slack
 
 require (
 	github.com/essentialkaos/ek/v12 v12.60.0

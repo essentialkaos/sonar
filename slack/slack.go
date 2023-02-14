@@ -161,6 +161,10 @@ func GetStatus(mail string) Status {
 			return STATUS_ONCALL
 		}
 
+		if meta.InHuddle {
+			return STATUS_IN_HUDDLE
+		}
+
 		return STATUS_ONLINE
 	}
 
@@ -474,15 +478,17 @@ func updateUserStatus(user slack.User) {
 
 	if user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call" {
 		meta.OnCall = true
-	} else if user.Profile.StatusEmoji == ":headphones:" && user.Profile.StatusText == "In a huddle" {
+		log.Info("Set status to ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+	} else if user.Profile.HuddleState == "in_a_huddle" {
 		meta.InHuddle = true
+		log.Info("Set status to IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+	} else if user.Profile.HuddleState == "default_unset" {
+		meta.InHuddle = false
+		log.Info("Removed status IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 	} else {
 		if meta.OnCall {
 			meta.OnCall = false
-		}
-
-		if meta.InHuddle {
-			meta.InHuddle = false
+			log.Info("Removed status ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 		}
 	}
 
