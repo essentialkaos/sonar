@@ -482,7 +482,7 @@ func updateUserStatus(user slack.User) {
 	} else if user.Profile.HuddleState == "in_a_huddle" {
 		meta.InHuddle = true
 		log.Info("Set status to IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-	} else if user.Profile.HuddleState == "default_unset" {
+	} else if user.Profile.HuddleState == "default_unset" && meta.InHuddle {
 		meta.InHuddle = false
 		log.Info("Removed status IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 	} else {
