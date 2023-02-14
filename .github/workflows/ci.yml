@@ -36,10 +36,6 @@ jobs:
         with:
           path: ${{env.SRC_DIR}}
 
-      - name: Download dependencies
-        working-directory: ${{env.SRC_DIR}}
-        run: make deps
-
       - name: Build binary
         working-directory: ${{env.SRC_DIR}}
         run: make all
