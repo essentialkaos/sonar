@@ -128,6 +128,8 @@ func getStatusBadge(userMail []byte) []byte {
 		return svg.Vacation
 	case slack.STATUS_ONCALL:
 		return svg.OnCall
+	case slack.STATUS_IN_HUDDLE:
+		return svg.InHuddle
 	case slack.STATUS_DISABLED:
 		return svg.Empty
 	default:

@@ -34,6 +34,7 @@ const (
 	STATUS_DND_OFFLINE
 	STATUS_VACATION
 	STATUS_ONCALL
+	STATUS_IN_HUDDLE
 	STATUS_DISABLED
 )
 
@@ -52,6 +53,7 @@ type userMeta struct {
 	Online     bool
 	Vacation   bool
 	OnCall     bool
+	InHuddle   bool
 	Disabled   bool
 	DNDStart   int64
 	DNDEnd     int64
@@ -470,12 +472,17 @@ func updateUserStatus(user slack.User) {
 	// Update vacation status
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-	// Update on-call status
 	if user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call" {
 		meta.OnCall = true
+	} else if user.Profile.StatusEmoji == ":headphones:" && user.Profile.StatusText == "In a huddle" {
+		meta.InHuddle = true
 	} else {
 		if meta.OnCall {
 			meta.OnCall = false
+		}
+
+		if meta.InHuddle {
+			meta.InHuddle = false
 		}
 	}
 
