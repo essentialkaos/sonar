@@ -26,9 +26,18 @@
 #### From [ESSENTIAL KAOS Public Repository](https://yum.kaos.st)
 
 ```bash
-sudo yum install -y https://yum.kaos.st/get/$(uname -r).rpm
+sudo yum install -y https://yum.kaos.st/kaos-repo-latest.el$(grep 'CPE_NAME' /etc/os-release | tr -d '"' | cut -d':' -f5).noarch.rpm
 sudo yum install sonar
 ```
+
+#### Slack app
+
+Create [classic Slack App](https://api.slack.com/apps?new_classic_app=1) (_this application requires RTM and can't work with socket mode due to lack of presence events_).
+
+Add next OAuth scopes to your app:
+
+- `dnd:read`
+- `users:read`
 
 #### Integration with Jira
 

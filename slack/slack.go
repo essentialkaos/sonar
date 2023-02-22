@@ -2,7 +2,7 @@ package slack
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2020 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"pkg.re/essentialkaos/ek.v12/log"
-	"pkg.re/essentialkaos/ek.v12/pluralize"
-	"pkg.re/essentialkaos/ek.v12/timeutil"
+	"github.com/essentialkaos/ek/v12/log"
+	"github.com/essentialkaos/ek/v12/pluralize"
+	"github.com/essentialkaos/ek/v12/timeutil"
 
 	"github.com/slack-go/slack"
 
@@ -34,6 +34,7 @@ const (
 	STATUS_DND_OFFLINE
 	STATUS_VACATION
 	STATUS_ONCALL
+	STATUS_IN_HUDDLE
 	STATUS_DISABLED
 )
 
@@ -52,6 +53,7 @@ type userMeta struct {
 	Online     bool
 	Vacation   bool
 	OnCall     bool
+	InHuddle   bool
 	Disabled   bool
 	DNDStart   int64
 	DNDEnd     int64
@@ -133,7 +135,7 @@ func GetStatus(mail string) Status {
 	data, ok := store.MailIndex.Get(mail)
 
 	if !ok {
-		log.Warn("Can't find info for user %s", mail)
+		log.Debug("Can't find info for user %s", mail)
 		return STATUS_UNKNOWN
 	}
 
@@ -157,6 +159,10 @@ func GetStatus(mail string) Status {
 
 		if meta.OnCall {
 			return STATUS_ONCALL
+		}
+
+		if meta.InHuddle {
+			return STATUS_IN_HUDDLE
 		}
 
 		return STATUS_ONLINE
@@ -204,6 +210,13 @@ func rtmLoop() {
 			case *slack.DisconnectedEvent:
 				connected = false
 				log.Warn("Disconnected from Slack")
+
+			case *slack.ConnectionErrorEvent:
+				connected = false
+				log.Warn(
+					"Slack connecting error: %s",
+					event.Data.(*slack.ConnectionErrorEvent).Error(),
+				)
 
 			case *slack.HelloEvent:
 				sendPresenceQuery()
@@ -311,7 +324,7 @@ func fetchInitialInfo() error {
 
 // addNewUser add new user to store
 func addNewUser(user slack.User, dndInfo map[string]slack.DNDStatus) {
-	if user.IsBot {
+	if user.IsBot || user.Deleted {
 		return
 	}
 
@@ -445,7 +458,7 @@ func checkUserDND(id string, meta *userMeta) {
 
 // updateUserStatus user vacation status
 func updateUserStatus(user slack.User) {
-	if user.IsBot {
+	if user.IsBot || user.Deleted {
 		return
 	}
 
@@ -463,12 +476,19 @@ func updateUserStatus(user slack.User) {
 	// Update vacation status
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-	// Update on-call status
 	if user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call" {
 		meta.OnCall = true
+		log.Info("Set status to ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+	} else if user.Profile.HuddleState == "in_a_huddle" {
+		meta.InHuddle = true
+		log.Info("Set status to IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
+	} else if user.Profile.HuddleState == "default_unset" && meta.InHuddle {
+		meta.InHuddle = false
+		log.Info("Removed status IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 	} else {
 		if meta.OnCall {
 			meta.OnCall = false
+			log.Info("Removed status ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 		}
 	}
 
