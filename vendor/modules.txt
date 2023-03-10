@@ -1,7 +1,7 @@
 # github.com/andybalholm/brotli v1.0.5
 ## explicit; go 1.12
 github.com/andybalholm/brotli
-# github.com/essentialkaos/ek/v12 v12.61.0
+# github.com/essentialkaos/ek/v12 v12.62.0
 ## explicit; go 1.18
 github.com/essentialkaos/ek/v12/color
 github.com/essentialkaos/ek/v12/env

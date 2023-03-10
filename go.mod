@@ -5,7 +5,7 @@ go 1.19
 replace github.com/slack-go/slack => ../slack
 
 require (
-	github.com/essentialkaos/ek/v12 v12.61.0
+	github.com/essentialkaos/ek/v12 v12.62.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/slack-go/slack v0.12.1
 	github.com/valyala/fasthttp v1.44.0
