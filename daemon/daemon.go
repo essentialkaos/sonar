@@ -289,13 +289,13 @@ func printWarn(f string, a ...interface{}) {
 	fmtc.Fprintf(os.Stderr, "{y}"+f+"{!}\n", a...)
 }
 
-// printErrorAndExit print error mesage and exit with exit code 1
+// printErrorAndExit print error message and exit with exit code 1
 func printErrorAndExit(f string, a ...interface{}) {
 	printError(f, a...)
 	os.Exit(1)
 }
 
-// shutdown stops deamon
+// shutdown stops daemon
 func shutdown(code int) {
 	pid.Remove(PID_FILE)
 	os.Exit(code)
@@ -307,7 +307,7 @@ func shutdown(code int) {
 func showUsage() {
 	info := usage.NewInfo()
 
-	info.AddOption(OPT_CONFIG, "Path to configuraion file", "file")
+	info.AddOption(OPT_CONFIG, "Path to configuration file", "file")
 	info.AddOption(OPT_NO_COLOR, "Disable colors in output")
 	info.AddOption(OPT_HELP, "Show this help message")
 	info.AddOption(OPT_VERSION, "Show version")
