@@ -14,7 +14,7 @@
 
 Summary:        Utility for showing user Slack status in Atlassian Jira
 Name:           sonar
-Version:        1.8.0
+Version:        1.8.1
 Release:        0%{?dist}
 Group:          Applications/System
 License:        Apache License, Version 2.0
@@ -103,6 +103,10 @@ exit 0
 ################################################################################
 
 %changelog
+* Fri Apr 28 2023 Anton Novojilov <andy@essentialkaos.com> - 1.8.1-0
+- Dependecies update
+- Typos update
+
 * Thu Mar 31 2022 Anton Novojilov <andy@essentialkaos.com> - 1.8.0-0
 - Removed pkg.re usage
 - Smaller, optimized SVG images
