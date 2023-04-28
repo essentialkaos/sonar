@@ -104,7 +104,7 @@ exit 0
 
 %changelog
 * Fri Apr 28 2023 Anton Novojilov <andy@essentialkaos.com> - 1.8.1-0
-- Dependecies update
+- Dependencies update
 - Typos update
 
 * Thu Mar 31 2022 Anton Novojilov <andy@essentialkaos.com> - 1.8.0-0
