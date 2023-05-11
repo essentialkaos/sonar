@@ -26,7 +26,7 @@ Source100:      checksum.sha512
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  golang >= 1.19
+BuildRequires:  golang >= 1.20
 
 Requires:       kaosv >= 2.16
 Requires:       systemd
