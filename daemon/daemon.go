@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
+	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/jsonutil"
 	"github.com/essentialkaos/ek/v12/knf"
 	"github.com/essentialkaos/ek/v12/log"
@@ -24,6 +25,7 @@ import (
 	knff "github.com/essentialkaos/ek/v12/knf/validators/fs"
 
 	"github.com/essentialkaos/sonar/slack"
+	"github.com/essentialkaos/sonar/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -31,7 +33,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.8.0"
+	VER  = "1.8.1"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
@@ -40,7 +42,9 @@ const (
 	OPT_CONFIG   = "c:config"
 	OPT_NO_COLOR = "nc:no-color"
 	OPT_HELP     = "h:help"
-	OPT_VERSION  = "v:version"
+	OPT_VER      = "v:version"
+
+	OPT_VERB_VER = "vv:verbose-version"
 )
 
 // Configuration file props
@@ -70,8 +74,10 @@ const (
 var optMap = options.Map{
 	OPT_CONFIG:   {Value: "/etc/sonar.knf"},
 	OPT_NO_COLOR: {Type: options.BOOL},
-	OPT_HELP:     {Type: options.BOOL, Alias: "u:usage"},
-	OPT_VERSION:  {Type: options.BOOL, Alias: "ver"},
+	OPT_HELP:     {Type: options.BOOL},
+	OPT_VER:      {Type: options.BOOL},
+
+	OPT_VERB_VER: {Type: options.BOOL},
 }
 
 var (
@@ -83,29 +89,29 @@ var (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-func Init() {
+// Run is main daemon function
+func Run(gitRev string, gomod []byte) {
+	preConfigureUI()
+
 	_, errs := options.Parse(optMap)
 
 	if len(errs) != 0 {
-		for _, err := range errs {
-			printError(err.Error())
-		}
-
+		printError(errs[0].Error())
 		os.Exit(1)
 	}
 
-	if options.GetB(OPT_NO_COLOR) {
-		fmtc.DisableColors = true
-	}
+	configureUI()
 
-	if options.GetB(OPT_VERSION) {
-		showAbout()
-		return
-	}
-
-	if options.GetB(OPT_HELP) {
-		showUsage()
-		return
+	switch {
+	case options.GetB(OPT_VER):
+		genAbout(gitRev).Print(options.GetS(OPT_VER))
+		os.Exit(0)
+	case options.GetB(OPT_HELP):
+		genUsage().Print()
+		os.Exit(0)
+	case options.GetB(OPT_VERB_VER):
+		support.Print(APP, VER, gitRev, gomod)
+		os.Exit(0)
 	}
 
 	loadConfig()
@@ -120,6 +126,37 @@ func Init() {
 	enabled = knf.GetB(MAIN_ENABLED, true)
 
 	start()
+}
+
+// preConfigureUI preconfigures UI based on information about user terminal
+func preConfigureUI() {
+	term := os.Getenv("TERM")
+
+	fmtc.DisableColors = true
+
+	if term != "" {
+		switch {
+		case strings.Contains(term, "xterm"),
+			strings.Contains(term, "color"),
+			term == "screen":
+			fmtc.DisableColors = false
+		}
+	}
+
+	if !fsutil.IsCharacterDevice("/dev/stdout") && os.Getenv("FAKETTY") == "" {
+		fmtc.DisableColors = true
+	}
+
+	if os.Getenv("NO_COLOR") != "" {
+		fmtc.DisableColors = true
+	}
+}
+
+// configureUI configures user interface
+func configureUI() {
+	if options.GetB(OPT_NO_COLOR) {
+		fmtc.DisableColors = true
+	}
 }
 
 // loadConfig read and parse configuration file
@@ -289,13 +326,13 @@ func printWarn(f string, a ...interface{}) {
 	fmtc.Fprintf(os.Stderr, "{y}"+f+"{!}\n", a...)
 }
 
-// printErrorAndExit print error mesage and exit with exit code 1
+// printErrorAndExit print error message and exit with exit code 1
 func printErrorAndExit(f string, a ...interface{}) {
 	printError(f, a...)
 	os.Exit(1)
 }
 
-// shutdown stops deamon
+// shutdown stops daemon
 func shutdown(code int) {
 	pid.Remove(PID_FILE)
 	os.Exit(code)
@@ -303,20 +340,20 @@ func shutdown(code int) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// showUsage prints usage info
-func showUsage() {
+// genUsage generates usage info
+func genUsage() *usage.Info {
 	info := usage.NewInfo()
 
-	info.AddOption(OPT_CONFIG, "Path to configuraion file", "file")
+	info.AddOption(OPT_CONFIG, "Path to configuration file", "file")
 	info.AddOption(OPT_NO_COLOR, "Disable colors in output")
 	info.AddOption(OPT_HELP, "Show this help message")
-	info.AddOption(OPT_VERSION, "Show version")
+	info.AddOption(OPT_VER, "Show version")
 
-	info.Render()
+	return info
 }
 
-// showAbout prints information about license and version
-func showAbout() {
+// genAbout generates info about version
+func genAbout(gitRev string) *usage.About {
 	about := &usage.About{
 		App:     APP,
 		Version: VER,
@@ -326,5 +363,9 @@ func showAbout() {
 		License: "Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>",
 	}
 
-	about.Render()
+	if gitRev != "" {
+		about.Build = "git:" + gitRev
+	}
+
+	return about
 }

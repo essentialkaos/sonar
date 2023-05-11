@@ -6,8 +6,10 @@ updates:
     target-branch: "develop"
     schedule:
       interval: "daily"
-      timezone: "Europe/Moscow"
-      time: "06:00"
+      timezone: "Europe/London"
+      time: "03:00"
+    labels:
+      - "PR • MAINTENANCE"
     assignees:
       - "andyone"
     reviewers:
@@ -15,5 +17,14 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "develop"
     schedule:
       interval: "daily"
+      timezone: "Europe/London"
+      time: "04:00"
+    labels:
+      - "PR • MAINTENANCE"
+    assignees:
+      - "andyone"
+    reviewers:
+      - "andyone"
