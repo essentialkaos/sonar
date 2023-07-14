@@ -5,8 +5,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/essentialkaos/check v1.4.0 h1:kWdFxu9odCxUqo1NNFNJmguGrDHgwi3A8daXX1nkuKk=
 github.com/essentialkaos/depsy v1.1.0 h1:U6dp687UkQwXlZU17Hg2KMxbp3nfZAoZ8duaeUFYvJI=
 github.com/essentialkaos/depsy v1.1.0/go.mod h1:kpiTAV17dyByVnrbNaMcZt2jRwvuXClUYOzpyJQwtG8=
-github.com/essentialkaos/ek/v12 v12.68.0 h1:/tNqKHfGypPUUu+aQ8LcmmWWEOO8itJZoJgOCPOZFY8=
-github.com/essentialkaos/ek/v12 v12.68.0/go.mod h1:CAPhbYcAiQsCP7CMyBlkgD/MgvuLcbr4EXjCIKn3DIk=
+github.com/essentialkaos/ek/v12 v12.69.0 h1:UxDZdFLgA15BVelpR3IpkY3RPc/EdY7sXJHbT4T7J90=
+github.com/essentialkaos/ek/v12 v12.69.0/go.mod h1:juDcZWOWaj1QmYShZkT9RzdqJ3n0tmeP/iq4sw5fQF0=
 github.com/essentialkaos/slack v0.0.0-20230418134115-ed5fe51c0353 h1:u7mIo40GmrqQGg/PsxNFjWXWDQvrjDOrwnucKv63lXg=
 github.com/essentialkaos/slack v0.0.0-20230418134115-ed5fe51c0353/go.mod h1:hlGi5oXA+Gt+yWTPP0plCdRKmjsDxecdHxYQdlMQKOw=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
@@ -31,6 +31,6 @@ github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6Kllzaw
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.48.0 h1:oJWvHb9BIZToTQS3MuQ2R3bJZiNSa2KiNdeI8A+79Tc=
 github.com/valyala/fasthttp v1.48.0/go.mod h1:k2zXd82h/7UZc3VOdJ2WaUqt1uZ/XpXAfE9i+HBC3lA=
-golang.org/x/sys v0.9.0 h1:KS/R3tvhPqvJvwcKfnBHJwwthS11LRhmM5D59eEXa0s=
-golang.org/x/sys v0.9.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.10.0 h1:SqMFp9UcQJZa+pmYuAKjd9xq1f0j5rLcDIk0mj4qAsA=
+golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
