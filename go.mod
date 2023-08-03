@@ -6,7 +6,7 @@ replace github.com/slack-go/slack v0.12.2 => github.com/essentialkaos/slack v0.0
 
 require (
 	github.com/essentialkaos/depsy v1.1.0
-	github.com/essentialkaos/ek/v12 v12.73.2
+	github.com/essentialkaos/ek/v12 v12.75.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/slack-go/slack v0.12.2
 	github.com/valyala/fasthttp v1.48.0
