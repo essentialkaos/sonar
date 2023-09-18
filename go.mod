@@ -9,7 +9,7 @@ require (
 	github.com/essentialkaos/ek/v12 v12.76.1
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/slack-go/slack v0.12.2
-	github.com/valyala/fasthttp v1.49.0
+	github.com/valyala/fasthttp v1.50.0
 )
 
 require (
