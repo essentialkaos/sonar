@@ -9,13 +9,13 @@ require (
 	github.com/essentialkaos/ek/v12 v12.99.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/slack-go/slack v0.12.2
-	github.com/valyala/fasthttp v1.51.0
+	github.com/valyala/fasthttp v1.52.0
 )
 
 require (
-	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/klauspost/compress v1.17.0 // indirect
+	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 )
