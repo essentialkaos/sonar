@@ -6,7 +6,7 @@ replace github.com/slack-go/slack v0.12.2 => github.com/essentialkaos/slack v0.0
 
 require (
 	github.com/essentialkaos/depsy v1.1.0
-	github.com/essentialkaos/ek/v12 v12.102.0
+	github.com/essentialkaos/ek/v12 v12.104.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/slack-go/slack v0.12.2
 	github.com/valyala/fasthttp v1.52.0
@@ -17,5 +17,5 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 )
