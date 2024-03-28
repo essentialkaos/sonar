@@ -196,7 +196,7 @@ func registerSignalHandlers() {
 
 // setupLogger setups logger
 func setupLogger() {
-	err := log.Set(knf.GetS(LOG_FILE), knf.GetM(LOG_PERMS, 644))
+	err := log.Set(knf.GetS(LOG_FILE), knf.GetM(LOG_PERMS, 0640))
 
 	if err != nil {
 		printErrorAndExit(err.Error())
@@ -305,11 +305,6 @@ func hupSignalHandler() {
 // printError prints error message to console
 func printError(f string, a ...interface{}) {
 	fmtc.Fprintf(os.Stderr, "{r}"+f+"{!}\n", a...)
-}
-
-// printError prints warning message to console
-func printWarn(f string, a ...interface{}) {
-	fmtc.Fprintf(os.Stderr, "{y}"+f+"{!}\n", a...)
 }
 
 // printErrorAndExit print error message and exit with exit code 1

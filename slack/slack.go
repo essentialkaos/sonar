@@ -198,8 +198,8 @@ func rtmLoop() {
 		select {
 		case event := <-rtm.IncomingEvents:
 			log.Debug("Got slack event %v", event)
-			switch event.Data.(type) {
 
+			switch ev := event.Data.(type) {
 			case *slack.ConnectingEvent:
 				log.Info("Connecting to Slack…")
 
@@ -215,18 +215,16 @@ func rtmLoop() {
 				connected = false
 				log.Warn(
 					"Slack connecting error: %s",
-					event.Data.(*slack.ConnectionErrorEvent).Error(),
+					ev.Error(),
 				)
 
 			case *slack.HelloEvent:
 				sendPresenceQuery()
 
 			case *slack.DNDUpdatedEvent:
-				ev := event.Data.(*slack.DNDUpdatedEvent)
 				updateUserDND(ev.User, ev.Status)
 
 			case *slack.PresenceChangeEvent:
-				ev := event.Data.(*slack.PresenceChangeEvent)
 				if ev.User != "" {
 					updateUserPresence([]string{ev.User}, ev.Presence == "active")
 				} else {
@@ -234,8 +232,6 @@ func rtmLoop() {
 				}
 
 			case *slack.UserChangeEvent:
-				ev := event.Data.(*slack.UserChangeEvent)
-
 				if !store.IDIndex.Has(ev.User.ID) {
 					addNewUser(ev.User, nil)
 				} else {
@@ -476,20 +472,19 @@ func updateUserStatus(user slack.User) {
 	// Update vacation status
 	meta.Vacation = strings.HasPrefix(user.RealName, "[")
 
-	if user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call" {
+	switch {
+	case user.Profile.StatusEmoji == ":slack_call:" && user.Profile.StatusText == "On a call":
 		meta.OnCall = true
 		log.Info("Set status to ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-	} else if user.Profile.HuddleState == "in_a_huddle" {
+	case user.Profile.HuddleState == "in_a_huddle":
 		meta.InHuddle = true
 		log.Info("Set status to IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-	} else if user.Profile.HuddleState == "default_unset" && meta.InHuddle {
+	case user.Profile.HuddleState == "default_unset" && meta.InHuddle:
 		meta.InHuddle = false
 		log.Info("Removed status IN_HUDDLE for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-	} else {
-		if meta.OnCall {
-			meta.OnCall = false
-			log.Info("Removed status ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
-		}
+	case meta.OnCall:
+		meta.OnCall = false
+		log.Info("Removed status ON_CALL for user %s (%s - %s)", user.Profile.Email, user.ID, user.RealName)
 	}
 
 	meta.mutex.Unlock()
