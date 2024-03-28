@@ -2,30 +2,30 @@ package daemon
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2023 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 import (
 	"os"
-	"strings"
 
 	"github.com/essentialkaos/ek/v12/fmtc"
-	"github.com/essentialkaos/ek/v12/fsutil"
 	"github.com/essentialkaos/ek/v12/jsonutil"
 	"github.com/essentialkaos/ek/v12/knf"
 	"github.com/essentialkaos/ek/v12/log"
 	"github.com/essentialkaos/ek/v12/options"
 	"github.com/essentialkaos/ek/v12/pid"
 	"github.com/essentialkaos/ek/v12/signal"
+	"github.com/essentialkaos/ek/v12/support"
+	"github.com/essentialkaos/ek/v12/support/deps"
+	"github.com/essentialkaos/ek/v12/terminal/tty"
 	"github.com/essentialkaos/ek/v12/usage"
 
 	knfv "github.com/essentialkaos/ek/v12/knf/validators"
 	knff "github.com/essentialkaos/ek/v12/knf/validators/fs"
 
 	"github.com/essentialkaos/sonar/slack"
-	"github.com/essentialkaos/sonar/support"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -33,7 +33,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.8.1"
+	VER  = "1.8.2"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
@@ -75,7 +75,7 @@ var optMap = options.Map{
 	OPT_CONFIG:   {Value: "/etc/sonar.knf"},
 	OPT_NO_COLOR: {Type: options.BOOL},
 	OPT_HELP:     {Type: options.BOOL},
-	OPT_VER:      {Type: options.BOOL},
+	OPT_VER:      {Type: options.MIXED},
 
 	OPT_VERB_VER: {Type: options.BOOL},
 }
@@ -110,7 +110,10 @@ func Run(gitRev string, gomod []byte) {
 		genUsage().Print()
 		os.Exit(0)
 	case options.GetB(OPT_VERB_VER):
-		support.Print(APP, VER, gitRev, gomod)
+		support.Collect(APP, VER).
+			WithRevision(gitRev).
+			WithDeps(deps.Extract(gomod)).
+			Print()
 		os.Exit(0)
 	}
 
@@ -120,7 +123,7 @@ func Run(gitRev string, gomod []byte) {
 	setupLogger()
 	createPidFile()
 
-	log.Aux(strings.Repeat("-", 88))
+	log.Divider()
 	log.Aux("%s %s starting…", APP, VER)
 
 	enabled = knf.GetB(MAIN_ENABLED, true)
@@ -130,24 +133,7 @@ func Run(gitRev string, gomod []byte) {
 
 // preConfigureUI preconfigures UI based on information about user terminal
 func preConfigureUI() {
-	term := os.Getenv("TERM")
-
-	fmtc.DisableColors = true
-
-	if term != "" {
-		switch {
-		case strings.Contains(term, "xterm"),
-			strings.Contains(term, "color"),
-			term == "screen":
-			fmtc.DisableColors = false
-		}
-	}
-
-	if !fsutil.IsCharacterDevice("/dev/stdout") && os.Getenv("FAKETTY") == "" {
-		fmtc.DisableColors = true
-	}
-
-	if os.Getenv("NO_COLOR") != "" {
+	if !tty.IsTTY() {
 		fmtc.DisableColors = true
 	}
 }
