@@ -8,13 +8,9 @@
 
 ################################################################################
 
-%define _logdir  %{_localstatedir}/log
-
-################################################################################
-
 Summary:        Utility for showing user Slack status in Atlassian Jira
 Name:           sonar
-Version:        1.8.1
+Version:        1.8.2
 Release:        0%{?dist}
 Group:          Applications/System
 License:        Apache License, Version 2.0
@@ -26,7 +22,7 @@ Source100:      checksum.sha512
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  golang >= 1.20
+BuildRequires:  golang >= 1.21
 
 Requires:       kaosv >= 2.16
 Requires:       systemd
@@ -63,7 +59,7 @@ install -dDm 755 %{buildroot}%{_bindir}
 install -dDm 755 %{buildroot}%{_sysconfdir}/logrotate.d
 install -dDm 755 %{buildroot}%{_initddir}
 install -dDm 755 %{buildroot}%{_unitdir}
-install -dDm 755 %{buildroot}%{_logdir}/%{name}
+install -dDm 755 %{buildroot}%{_localstatedir}/log/%{name}
 
 install -pm 755 %{name}/%{name} \
                 %{buildroot}%{_bindir}/
@@ -93,7 +89,7 @@ exit 0
 %files
 %defattr(-,root,root,-)
 %doc LICENSE
-%attr(-,%{name},%{name}) %dir %{_logdir}/%{name}
+%attr(-,%{name},%{name}) %dir %{_localstatedir}/log/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}.knf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %{_unitdir}/%{name}.service
@@ -103,6 +99,11 @@ exit 0
 ################################################################################
 
 %changelog
+* Fri Mar 29 2024 Anton Novojilov <andy@essentialkaos.com> - 1.8.2-0
+- Improved support information gathering
+- Code refactoring
+- Dependencies update
+
 * Fri Apr 28 2023 Anton Novojilov <andy@essentialkaos.com> - 1.8.1-0
 - Dependencies update
 - Typos update
