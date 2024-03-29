@@ -133,7 +133,7 @@ func Run(gitRev string, gomod []byte) {
 
 // preConfigureUI preconfigures UI based on information about user terminal
 func preConfigureUI() {
-	if !tty.IsTTY() {
+	if !tty.IsTTY() || tty.IsSystemd() {
 		fmtc.DisableColors = true
 	}
 }
