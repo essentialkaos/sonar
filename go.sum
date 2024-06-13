@@ -5,8 +5,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/essentialkaos/check v1.4.0 h1:kWdFxu9odCxUqo1NNFNJmguGrDHgwi3A8daXX1nkuKk=
 github.com/essentialkaos/depsy v1.3.0 h1:CN7bRgBU2jGTHSkg/Sh38eDUn7cvmaTp2sxFt2HpFeU=
 github.com/essentialkaos/depsy v1.3.0/go.mod h1:kpiTAV17dyByVnrbNaMcZt2jRwvuXClUYOzpyJQwtG8=
-github.com/essentialkaos/ek/v12 v12.126.0 h1:5iyDAFx5tIQeCOqLaT0Jwt7A3QPlgjH4tNhMyp7YAbs=
-github.com/essentialkaos/ek/v12 v12.126.0/go.mod h1:71IJ7m82hgjrvWnhL+z0vIhguxz47/rfVma5/CeI5Fw=
+github.com/essentialkaos/ek/v12 v12.126.1 h1:K4tCpu9T3k5Bv6hJ1lmW7Ou0GxjgjBIKRsoZgAGdEhE=
+github.com/essentialkaos/ek/v12 v12.126.1/go.mod h1:71IJ7m82hgjrvWnhL+z0vIhguxz47/rfVma5/CeI5Fw=
 github.com/essentialkaos/slack v0.0.0-20240328220008-c8788ecc08aa h1:nQBduoqUmXY4f+bH+aULbO/JvoW5HMNuPExinn38qOg=
 github.com/essentialkaos/slack v0.0.0-20240328220008-c8788ecc08aa/go.mod h1:hlGi5oXA+Gt+yWTPP0plCdRKmjsDxecdHxYQdlMQKOw=
 github.com/go-test/deep v1.0.4 h1:u2CU3YKy9I2pmu9pX0eq50wCgjfGIt539SqR7FbHiho=
