@@ -15,10 +15,10 @@ import (
 	"github.com/essentialkaos/ek/v12/knf"
 	"github.com/essentialkaos/ek/v12/log"
 	"github.com/essentialkaos/ek/v12/options"
-	"github.com/essentialkaos/ek/v12/pid"
 	"github.com/essentialkaos/ek/v12/signal"
 	"github.com/essentialkaos/ek/v12/support"
 	"github.com/essentialkaos/ek/v12/support/deps"
+	"github.com/essentialkaos/ek/v12/terminal"
 	"github.com/essentialkaos/ek/v12/terminal/tty"
 	"github.com/essentialkaos/ek/v12/usage"
 
@@ -33,7 +33,7 @@ import (
 // Basic info
 const (
 	APP  = "Sonar"
-	VER  = "1.8.2"
+	VER  = "1.9.0"
 	DESC = "Utility for showing user Slack status in JIRA"
 )
 
@@ -58,14 +58,8 @@ const (
 	HTTP_PORT     = "http:port"
 	LOG_DIR       = "log:dir"
 	LOG_FILE      = "log:file"
-	LOG_PERMS     = "log:perms"
+	LOG_MODE      = "log:mode"
 	LOG_LEVEL     = "log:level"
-)
-
-// Pid info
-const (
-	PID_DIR  = "/var/run/sonar"
-	PID_FILE = "sonar.pid"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -95,8 +89,9 @@ func Run(gitRev string, gomod []byte) {
 
 	_, errs := options.Parse(optMap)
 
-	if len(errs) != 0 {
-		printError(errs[0].Error())
+	if !errs.IsEmpty() {
+		terminal.Error("Options parsing errors:")
+		terminal.Error(errs.String())
 		os.Exit(1)
 	}
 
@@ -121,7 +116,6 @@ func Run(gitRev string, gomod []byte) {
 	validateConfig()
 	registerSignalHandlers()
 	setupLogger()
-	createPidFile()
 
 	log.Divider()
 	log.Aux("%s %s starting…", APP, VER)
@@ -175,10 +169,10 @@ func validateConfig() {
 	})
 
 	if len(errs) != 0 {
-		printError("Error while configuration file validation:")
+		terminal.Error("Error while configuration file validation:")
 
 		for _, err := range errs {
-			printError("  %v", err)
+			terminal.Error("  %v", err)
 		}
 
 		os.Exit(1)
@@ -196,7 +190,7 @@ func registerSignalHandlers() {
 
 // setupLogger setups logger
 func setupLogger() {
-	err := log.Set(knf.GetS(LOG_FILE), knf.GetM(LOG_PERMS, 0640))
+	err := log.Set(knf.GetS(LOG_FILE), knf.GetM(LOG_MODE, 0640))
 
 	if err != nil {
 		printErrorAndExit(err.Error())
@@ -242,17 +236,6 @@ func loadBots() {
 
 	if err != nil {
 		log.Error(err.Error())
-	}
-}
-
-// createPidFile creates PID file
-func createPidFile() {
-	pid.Dir = PID_DIR
-
-	err := pid.Create(PID_FILE)
-
-	if err != nil {
-		printErrorAndExit(err.Error())
 	}
 }
 
@@ -302,20 +285,14 @@ func hupSignalHandler() {
 	log.Info("Log reopened by HUP signal")
 }
 
-// printError prints error message to console
-func printError(f string, a ...interface{}) {
-	fmtc.Fprintf(os.Stderr, "{r}"+f+"{!}\n", a...)
-}
-
 // printErrorAndExit print error message and exit with exit code 1
 func printErrorAndExit(f string, a ...interface{}) {
-	printError(f, a...)
+	terminal.Error(f, a...)
 	os.Exit(1)
 }
 
 // shutdown stops daemon
 func shutdown(code int) {
-	pid.Remove(PID_FILE)
 	os.Exit(code)
 }
 

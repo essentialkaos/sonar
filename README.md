@@ -1,4 +1,4 @@
-<p align="center"><a href="#readme"><img src="https://gh.kaos.st/sonar.svg"/></a></p>
+<p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
 <p align="center">
   <a href="https://kaos.sh/r/sonar"><img src="https://kaos.sh/r/sonar.svg" alt="GoReportCard" /></a>
@@ -6,10 +6,10 @@
   <a href="https://kaos.sh/b/sonar"><img src="https://kaos.sh/b/49715c23-4ead-4edb-a351-b4c49cf8d061.svg" alt="codebeat badge" /></a>
   <a href="https://kaos.sh/w/sonar/ci"><img src="https://kaos.sh/w/sonar/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/w/sonar/codeql"><img src="https://kaos.sh/w/sonar/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
-  <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
+  <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
-<p align="center"><a href="#installation">Installation</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#installation">Installation</a> • <a href="#ci-status">CI Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -18,16 +18,16 @@
 ### Screenshots
 
 <p align="center">
-  <img src="https://gh.kaos.st/sonar-preview.png" alt="Sonar Preview">
+  <img src=".github/images/sonar-preview.png" alt="Sonar Preview">
   <i>Sonar in Jira 6.x (with <a href="https://github.com/essentialkaos/atlassian-remixed-theme">Remixed Theme</a>)</i>
 </p>
 
 ### Installation
 
-#### From [ESSENTIAL KAOS Public Repository](https://yum.kaos.st)
+#### From [ESSENTIAL KAOS Public Repository](https://kaos.sh/kaos-repo)
 
 ```bash
-sudo yum install -y https://yum.kaos.st/kaos-repo-latest.el$(grep 'CPE_NAME' /etc/os-release | tr -d '"' | cut -d':' -f5).noarch.rpm
+sudo yum install -y https://pkgs.kaos.st/kaos-repo-latest.el$(grep 'CPE_NAME' /etc/os-release | tr -d '"' | cut -d':' -f5).noarch.rpm
 sudo yum install sonar
 ```
 
@@ -67,7 +67,7 @@ Then restart your Jira instance.
 
 Also, you can add `sonar.js` to your announcement banner for a periodic status update.
 
-### Build Status
+### CI Status
 
 | Branch | Status |
 |--------|--------|

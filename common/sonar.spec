@@ -10,7 +10,7 @@
 
 Summary:        Utility for showing user Slack status in Atlassian Jira
 Name:           sonar
-Version:        1.8.2
+Version:        1.9.0
 Release:        0%{?dist}
 Group:          Applications/System
 License:        Apache License, Version 2.0
@@ -24,7 +24,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  golang >= 1.21
 
-Requires:       kaosv >= 2.16
 Requires:       systemd
 
 Provides:       %{name} = %{version}-%{release}
@@ -40,13 +39,15 @@ Utility for showing user Slack status in Atlassian Jira.
 %{crc_check}
 
 %setup -q
-
-%build
 if [[ ! -d "%{name}/vendor" ]] ; then
-  echo "This package requires vendored dependencies"
+  echo -e "----\nThis package requires vendored dependencies\n----"
+  exit 1
+elif [[ -f "%{name}/%{name}" ]] ; then
+  echo -e "----\nSources must not contain precompiled binaries\n----"
   exit 1
 fi
 
+%build
 pushd %{name}
   %{__make} %{?_smp_mflags} all
   cp LICENSE ..
@@ -66,9 +67,6 @@ install -pm 755 %{name}/%{name} \
 
 install -pm 644 %{name}/common/%{name}.knf \
                 %{buildroot}%{_sysconfdir}/
-
-install -pm 755 %{name}/common/%{name}.init \
-                %{buildroot}%{_initddir}/%{name}
 
 install -pm 644 %{name}/common/%{name}.logrotate \
                 %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -93,12 +91,16 @@ exit 0
 %config(noreplace) %{_sysconfdir}/%{name}.knf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %{_unitdir}/%{name}.service
-%{_initddir}/%{name}
 %{_bindir}/%{name}
 
 ################################################################################
 
 %changelog
+* Mon Jun 24 2024 Anton Novojilov <andy@essentialkaos.com> - 1.9.0-0
+- Removed init script
+- Code refactoring
+- Dependencies update
+
 * Fri Mar 29 2024 Anton Novojilov <andy@essentialkaos.com> - 1.8.2-0
 - Improved support information gathering
 - Code refactoring
