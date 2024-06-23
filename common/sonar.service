@@ -1,11 +1,18 @@
 [Unit]
 Description=Sonar Server
-After=network.target
+Documentation=https://kaos.sh/sonar
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
 
 [Service]
-PIDFile=/var/run/sonar/sonar.pid
-ExecStart=/etc/init.d/sonar start
-ExecStop=/etc/init.d/sonar stop
+Type=simple
+User=sonar
+EnvironmentFile=/etc/sysconfig/sonar
+ExecStart=/usr/bin/sonar -c /etc/sonar.knf
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+StandardError=file:/var/log/sonar/startup.log
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

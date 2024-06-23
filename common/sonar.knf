@@ -33,8 +33,8 @@
   # Path to log file
   file: {log:dir}/sonar.log
 
-  # Log permissions
-  perms: 600
+  # Log file mode
+  mode: 0600
 
   # Default log level (debug/info/warn/error/crit)
   level: info
