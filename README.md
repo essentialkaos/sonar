@@ -1,15 +1,9 @@
+> [!IMPORTANT]  
+> _This project is discounted. You can try to use it as is or fork it._
+
 <p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
-<p align="center">
-  <a href="https://kaos.sh/r/sonar"><img src="https://kaos.sh/r/sonar.svg" alt="GoReportCard" /></a>
-  <a href="https://kaos.sh/l/sonar"><img src="https://kaos.sh/l/3a446700084bb9c0c967.svg" alt="Code Climate Maintainability" /></a>
-  <a href="https://kaos.sh/b/sonar"><img src="https://kaos.sh/b/49715c23-4ead-4edb-a351-b4c49cf8d061.svg" alt="codebeat badge" /></a>
-  <a href="https://kaos.sh/w/sonar/ci"><img src="https://kaos.sh/w/sonar/ci.svg" alt="GitHub Actions CI Status" /></a>
-  <a href="https://kaos.sh/w/sonar/codeql"><img src="https://kaos.sh/w/sonar/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
-  <a href="#license"><img src=".github/images/license.svg"/></a>
-</p>
-
-<p align="center"><a href="#installation">Installation</a> • <a href="#ci-status">CI Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#installation">Installation</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -66,13 +60,6 @@ $textutils.htmlEncode($fullname)
 Then restart your Jira instance.
 
 Also, you can add `sonar.js` to your announcement banner for a periodic status update.
-
-### CI Status
-
-| Branch | Status |
-|--------|--------|
-| `master` | [![CI](https://kaos.sh/w/sonar/ci.svg?branch=master)](https://kaos.sh/w/sonar/ci?query=branch:master) |
-| `develop` | [![CI](https://kaos.sh/w/sonar/ci.svg?branch=master)](https://kaos.sh/w/sonar/ci?query=branch:develop) |
 
 ### Contributing
 
